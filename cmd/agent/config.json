@@ -1,0 +1,11 @@
+{
+    "natsHosts": [ "nats://localhost:4222" ],
+    "natsUser": "harambe",
+    "natsPass": "Imk)^InzID2QM*YMWPchUZ",
+    
+    "application": "notepad",
+    "applicationType": "process",
+    "identifier": "notepad.exe",
+
+    "logLevel": "info"
+}

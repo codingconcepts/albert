@@ -1,0 +1,19 @@
+hash: a4da1d16eb36ff2329e63d1c66241ec2ac192d084de5d7ac949fbd9c22275929
+updated: 2017-04-06T12:27:46.1445563+01:00
+imports:
+- name: github.com/nats-io/go-nats
+  version: 399fe00b07f048bdacbdbfdfeda39712642e6a11
+  subpackages:
+  - encoders/builtin
+  - util
+- name: github.com/nats-io/nuid
+  version: 3cf34f9fca4e88afa9da8eabd75e3326c9941b44
+- name: github.com/robfig/cron
+  version: df38d32658d8788cd446ba74db4bb5375c4b0cb3
+- name: github.com/Sirupsen/logrus
+  version: 10f801ebc38b33738c9d17d50860f484a0988ff5
+- name: golang.org/x/sys
+  version: 39e3dc274464e7d2f663aa606a830611bae5f1db
+  subpackages:
+  - unix
+testImports: []

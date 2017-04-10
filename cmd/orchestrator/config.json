@@ -1,0 +1,17 @@
+{
+    "natsHosts": [ "nats://localhost:4222" ],
+    "natsUser": "harambe",
+    "natsPass": "Imk)^InzID2QM*YMWPchUZ",
+    "gatherTimeout": "2s",
+    "gatherChanSize": 10,
+
+    "logLevel": "info",
+    
+    "applications": [
+        {
+            "name": "notepad",
+            "schedule": "1 * * * * *",
+            "percentage": 0.5
+        }
+    ]
+}

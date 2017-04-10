@@ -8,8 +8,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/codingconcepts/marcel/pkg/agent"
-	"github.com/codingconcepts/marcel/pkg/model"
+	"github.com/codingconcepts/albert/pkg/agent"
+	"github.com/codingconcepts/albert/pkg/model"
 	nats "github.com/nats-io/go-nats"
 )
 

@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/codingconcepts/marcel/pkg/model"
-	"github.com/codingconcepts/marcel/pkg/orchestrator"
+	"github.com/codingconcepts/albert/pkg/model"
+	"github.com/codingconcepts/albert/pkg/orchestrator"
 	nats "github.com/nats-io/go-nats"
 )
 

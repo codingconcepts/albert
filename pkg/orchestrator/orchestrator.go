@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/codingconcepts/marcel/pkg/model"
+	"github.com/codingconcepts/albert/pkg/model"
 	nats "github.com/nats-io/go-nats"
 	"github.com/robfig/cron"
 )

@@ -2,7 +2,7 @@ package orchestrator
 
 import (
 	"github.com/Sirupsen/logrus"
-	"github.com/codingconcepts/marcel/pkg/model"
+	"github.com/codingconcepts/albert/pkg/model"
 	nats "github.com/nats-io/go-nats"
 )
 

@@ -1,7 +1,7 @@
 require 'rake'
 
-orchOutput = 'harambe-orchestrator.exe'
-agentOutput = 'harambe-agent.exe'
+orchOutput = 'albertOrchestrator.exe'
+agentOutput = 'albertAgent.exe'
 
 task :nats do
     Dir.chdir('cmd\\nats') do

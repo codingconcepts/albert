@@ -1,6 +1,9 @@
 # Albert
 I'd be pretty pissed off too if you blasted me off into space and left me to suffocate.
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c57760a288af415083e6c1331143d368)](https://www.codacy.com/app/codingconcepts/albert?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=codingconcepts/albert&amp;utm_campaign=Badge_Grade)
+[![Go Report Card](https://goreportcard.com/badge/github.com/codingconcepts/albert)](https://goreportcard.com/report/github.com/codingconcepts/albert)
+
 ## Disclaimer
 
 Albert is the result of a 2-day project I undertook for my company's last hackathon.  As such, it shouldn't be considered reliable, finished or well-tested.  I'd love this to receive some input from the open source community, so if you're in need of a chaos monkey, or just want to make an existing one more chaotic, I'd love to hear from you!

@@ -3,7 +3,7 @@ I'd be pretty pissed off too if you blasted me into space and left me to suffoca
 
 ## Disclaimer
 
-Albert is the result of a 2-day project I undertook for my company's last hackathon.  As such, it shouldn't be considered reliable, finished or well-tested.  I'd love for this to get traction, so if you're in need of a chaos monkey, or just want to make an existing one more ... chaosy, I'd love to hear from you!
+Albert is the result of a 2-day project I undertook for my company's last hackathon.  As such, it shouldn't be considered reliable, finished or well-tested.  I'd love this to receive some input from the open source community, so if you're in need of a chaos monkey, or just want to make an existing one more chaotic, I'd love to hear from you!
 
 ## Overview
 
@@ -34,7 +34,7 @@ To clear this up, here's an example which kills 50% of a make-believe `MarketDat
 
 ### Agent
 
-An agent is configured to kill a process, a machine, a docker container (not tested), or a network interface (not developed).
+An agent is configured to kill a process, a machine, a Docker container (not tested), or a network interface (not developed).
 
 As with the orchestrator, here's some example configuration (with the obvious bits omitted) to help you make sense of things:
 
@@ -46,7 +46,7 @@ As with the orchestrator, here's some example configuration (with the obvious bi
 }
 ```
 
-The contrived MarketDataAPI example might be running different agents on different OS's to do its job.  For example, there might be a WebAPI running in IIS serving customers and a Go web server running inside a Docker container on a Linux machine serving internal interconnected systems.  To acheive this, just run an agent on each machine with config to suit the job it's performing.  Note, they're both running as part of the MarketDataAPI application, this has to match up to the orchestrator's name.
+The contrived MarketDataAPI example might be running different agents on different OS's to do its job.  For example, there might be a WebAPI running in IIS serving customers and a Go web server running inside a Docker container on a Linux machine serving internal interconnected systems.  To achieve this, just run an agent on each machine with config to suit the job it's performing.  Note, they're both running as part of the MarketDataAPI application which needs to match up to the orchestrator's application name.
 
 ``` json
 {

@@ -27,7 +27,7 @@ Out of habit, I'm using Rake, so if you've got it available (it's really easy to
 $ rake run
 ```
 
-This will start the gnatsd node, 2 agents and 1 orchestrator.  The agents are running in `dummy` mode, just in case you're on a Windows machine and happen to have Notepad running :)
+This will start the gnatsd node, 2 agents and 1 orchestrator.  The agents are configured to run in `dummy` mode, just in case you're on a Windows machine and happen to have Notepad running :)
 
 ### Orchestrator
 

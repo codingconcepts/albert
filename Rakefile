@@ -1,7 +1,14 @@
 require 'rake'
 
-orchOutput = 'orchestrator.exe'
-agentOutput = 'agent.exe'
+orchOutput = 'albert-orchestrator.exe'
+agentOutput = 'albert-agent.exe'
+embeddedExampleOutput = 'albert-embedded-example.exe'
+
+task :test do
+    Dir.chdir('pkg') do
+        sh("go test ./... -v")
+    end
+end
 
 task :nats do
     Dir.chdir('cmd\\nats') do
@@ -21,6 +28,13 @@ task :agent do
         sh('go', 'build', '-o', agentOutput)
         sh("start #{agentOutput}")
         sh("start #{agentOutput}")
+    end
+end
+
+task :example do
+    Dir.chdir('cmd\\example') do
+        sh('go', 'build', '-o', embeddedExampleOutput)
+        sh("start #{embeddedExampleOutput}")
     end
 end
 

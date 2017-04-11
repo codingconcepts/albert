@@ -24,11 +24,11 @@ type Orchestrator struct {
 
 // NewOrchestrator returns a pointer to a new instance of
 // an Orchestrator.
-func NewOrchestrator(c *Config) (o *Orchestrator) {
+func NewOrchestrator(c *Config, conn *nats.Conn, logger *logrus.Logger) (o *Orchestrator) {
 	return &Orchestrator{
-		Connection:   c.Connection,
+		Connection:   conn,
 		Applications: c.Applications,
-		Logger:       c.Logger,
+		Logger:       logger,
 
 		gatherTimeout:  c.GatherTimeout.Duration,
 		gatherChanSize: c.GatherChanSize,

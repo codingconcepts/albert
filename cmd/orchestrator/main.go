@@ -1,10 +1,7 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"os"
 
@@ -15,58 +12,36 @@ import (
 )
 
 func main() {
-	config := mustLoadConfig("config.json")
-	initLogger(config)
-	mustConnectToNATS(config)
-
-	o := orchestrator.NewOrchestrator(config)
-	go o.Start()
-	defer o.Stop()
-
-	for _, a := range o.Applications {
-		config.Logger.WithFields(logrus.Fields{
-			"name":       a.Name,
-			"schedule":   a.Schedule,
-			"percentage": a.Percentage,
-		}).Info("application schedule")
-	}
-
-	config.Logger.Info("orchestrator started successfully")
-	fmt.Scanln()
-}
-
-func mustLoadConfig(path string) (c *orchestrator.Config) {
-	file, err := os.Open(path)
+	config, err := orchestrator.NewConfigFromFile("config.json")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	buffer := new(bytes.Buffer)
-	if _, err = io.Copy(buffer, file); err != nil {
-		log.Fatal(err)
-	}
+	logger := model.NewLogger(os.Stdout, config.LogLevel.Level)
 
-	c = new(orchestrator.Config)
-	if err = json.Unmarshal(buffer.Bytes(), c); err != nil {
-		log.Fatal(err)
-	}
-
-	return
-}
-
-func initLogger(config *orchestrator.Config) {
-	config.Logger = model.NewLogger(os.Stdout, config.LogLevel.Level)
-}
-
-func mustConnectToNATS(config *orchestrator.Config) {
-	var err error
 	opts := nats.Options{
 		User:     config.NatsUser,
 		Password: config.NatsPass,
 		Servers:  config.NatsHosts,
 	}
 
-	if config.Connection, err = opts.Connect(); err != nil {
-		config.Logger.Fatal(err)
+	conn, err := opts.Connect()
+	if err != nil {
+		logger.Fatal(err)
 	}
+
+	o := orchestrator.NewOrchestrator(config, conn, logger)
+	go o.Start()
+	defer o.Stop()
+
+	for _, a := range o.Applications {
+		logger.WithFields(logrus.Fields{
+			"name":       a.Name,
+			"schedule":   a.Schedule,
+			"percentage": a.Percentage,
+		}).Info("application schedule")
+	}
+
+	logger.Info("orchestrator started successfully")
+	fmt.Scanln()
 }

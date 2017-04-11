@@ -1,6 +1,6 @@
 {
     "natsHosts": [ "nats://localhost:4222" ],
-    "natsUser": "harambe",
+    "natsUser": "albert",
     "natsPass": "Imk)^InzID2QM*YMWPchUZ",
     "gatherTimeout": "2s",
     "gatherChanSize": 10,

@@ -1,9 +1,12 @@
 package agent
 
 import (
-	"github.com/Sirupsen/logrus"
+	"bytes"
+	"encoding/json"
+	"io"
+	"os"
+
 	"github.com/codingconcepts/albert/pkg/model"
-	nats "github.com/nats-io/go-nats"
 )
 
 // Config holds the configuration variables an agent
@@ -13,12 +16,28 @@ type Config struct {
 	NatsUser  string   `json:"natsUser"`
 	NatsPass  string   `json:"natsPass"`
 
-	Logger   *logrus.Logger
 	LogLevel model.ConfigLogLevel `json:"logLevel"`
-
-	Connection *nats.Conn
 
 	Application     string                `json:"application"`
 	ApplicationType model.ApplicationType `json:"applicationType"`
 	Identifier      string                `json:"identifier"`
+}
+
+// NewConfigFromFile loads Agent configuration from a
+// given file path and returns any errors encountered.
+func NewConfigFromFile(path string) (c *Config, err error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return
+	}
+
+	buffer := new(bytes.Buffer)
+	if _, err = io.Copy(buffer, file); err != nil {
+		return
+	}
+
+	c = new(Config)
+	err = json.Unmarshal(buffer.Bytes(), c)
+
+	return
 }

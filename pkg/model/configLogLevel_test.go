@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/codingconcepts/pocs/chaos/harambe/pkg/model"
+	"github.com/codingconcepts/albert/pkg/model"
 )
 
 func TestConfigLogLevel(t *testing.T) {

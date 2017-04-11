@@ -4,8 +4,8 @@
     "natsPass": "Imk)^InzID2QM*YMWPchUZ",
     
     "application": "notepad",
-    "applicationType": "dummy",
-    "identifier": "notepad.exe",
+    "applicationType": "process",
+    "identifier": "albert-embedded-example.exe",
 
     "logLevel": "info"
 }

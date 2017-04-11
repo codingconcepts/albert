@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/codingconcepts/pocs/chaos/harambe/pkg/model"
+	"github.com/codingconcepts/albert/pkg/model"
 )
 
 func TestTakeRandom(t *testing.T) {

@@ -11,6 +11,20 @@ Albert is a simple, scalable and platform agnostic chaos monkey.
 
 There are only two components, both hooked together using the wonderful NATS messaging platform:
 
+### Install and run
+
+``` bash
+$ go get -u github.com/codingconcepts/albert
+```
+
+Out of habit, I'm using Rake, so if you've got it available (it's really easy to install), just run the following at the project root directory:
+
+``` bash
+$ rake run
+```
+
+This will start the gnatsd node, 4 agents and 1 orchestrator.  The agents are running in `dummy` mode, just in case you're on a Windows machine and happen to have Notepad running :)
+
 ### Orchestrator
 
 One or more orchestrators execute configurable tasks to take down zero or more nodes of zero or more applications.  Importantly, orchestrators are completely unaware of the agents executing the tasks.

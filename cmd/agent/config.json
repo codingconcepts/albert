@@ -4,7 +4,7 @@
     "natsPass": "Imk)^InzID2QM*YMWPchUZ",
     
     "application": "notepad",
-    "applicationType": "process",
+    "applicationType": "dummy",
     "identifier": "notepad.exe",
 
     "logLevel": "info"

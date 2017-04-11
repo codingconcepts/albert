@@ -11,6 +11,10 @@ Albert is a simple, scalable and platform agnostic chaos monkey.
 
 There are only two components, both hooked together using the wonderful NATS messaging platform:
 
+### Dependencies
+
+The only external dependency you'll need to run Albert is [NATS](http://nats.io/), a FOSS messaging system.  Either install the [binary](http://nats.io/download/nats-io/gnatsd/) or build from [source](https://github.com/nats-io/gnatsd).  Make sure to add the resulting `gnatsd` executable into your PATH.
+
 ### Install and run
 
 ``` bash
@@ -23,7 +27,7 @@ Out of habit, I'm using Rake, so if you've got it available (it's really easy to
 $ rake run
 ```
 
-This will start the gnatsd node, 4 agents and 1 orchestrator.  The agents are running in `dummy` mode, just in case you're on a Windows machine and happen to have Notepad running :)
+This will start the gnatsd node, 2 agents and 1 orchestrator.  The agents are running in `dummy` mode, just in case you're on a Windows machine and happen to have Notepad running :)
 
 ### Orchestrator
 

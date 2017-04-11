@@ -7,7 +7,6 @@ import (
 	"io"
 	"log"
 	"os"
-	"time"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/codingconcepts/albert/pkg/model"
@@ -21,22 +20,15 @@ func main() {
 	mustConnectToNATS(config)
 
 	o := orchestrator.NewOrchestrator(config)
-	//go o.Start()
-	//defer o.Stop()
+	go o.Start()
+	defer o.Stop()
 
 	for _, a := range o.Applications {
 		config.Logger.WithFields(logrus.Fields{
 			"name":       a.Name,
 			"schedule":   a.Schedule,
 			"percentage": a.Percentage,
-		}).Info("application configured")
-	}
-
-	// trigger every 5s
-	for range time.NewTicker(time.Second * 5).C {
-		for _, a := range o.Applications {
-			o.Process(a)
-		}
+		}).Info("application schedule")
 	}
 
 	config.Logger.Info("orchestrator started successfully")

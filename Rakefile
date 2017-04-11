@@ -21,8 +21,6 @@ task :agent do
         sh('go', 'build', '-o', agentOutput)
         sh("start #{agentOutput}")
         sh("start #{agentOutput}")
-        sh("start #{agentOutput}")
-        sh("start #{agentOutput}")
     end
 end
 

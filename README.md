@@ -1,5 +1,5 @@
 # albert
-I'd be pretty pissed off too if you blasted me into space and left me to suffocate.
+I'd be pretty pissed off too if you blasted me off into space and left me to suffocate.
 
 ## Disclaimer
 
@@ -9,7 +9,7 @@ Albert is the result of a 2-day project I undertook for my company's last hackat
 
 Albert is a simple, scalable and platform agnostic chaos monkey.
 
-There are only two components, both hooked together using the wonderful NATS messaging platform:
+There are only two components, an orchestrator and an agent.  The orchestrator publishes commands to the agents and the agents execute kill requests against processes or Docker images etc. on the machines they're running on.  Both are hooked together using the wonderful NATS messaging platform.
 
 ### Dependencies
 

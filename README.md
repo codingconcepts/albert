@@ -77,8 +77,7 @@ The contrived MarketDataAPI example might be running different agents on differe
 ### Todo
 
 - [ ] TLS for NATS connections (clients and cluster nodes)
-- [ ] Test cross-machine
-- [ ] Test with Linux machines
+- [ ] Test cross-platform
 - [ ] SDK to turn any application into an agent
 - [ ] SDKs for clients in other languages
-- [ ] Agent overrides for kill procedure
+- [ ] Agent overrides for kill procedure (in config)

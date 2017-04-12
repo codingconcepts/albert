@@ -1,0 +1,44 @@
+{
+	"ImportPath": "github.com/codingconcepts/albert",
+	"GoVersion": "go1.8",
+	"GodepVersion": "v79",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/Sirupsen/logrus",
+			"Comment": "v0.11.4",
+			"Rev": "0208149b40d863d2c1a2f8fe5753096a9cf2cc8b"
+		},
+		{
+			"ImportPath": "github.com/nats-io/go-nats",
+			"Comment": "v1.2.2-31-g399fe00",
+			"Rev": "399fe00b07f048bdacbdbfdfeda39712642e6a11"
+		},
+		{
+			"ImportPath": "github.com/nats-io/go-nats/encoders/builtin",
+			"Comment": "v1.2.2-31-g399fe00",
+			"Rev": "399fe00b07f048bdacbdbfdfeda39712642e6a11"
+		},
+		{
+			"ImportPath": "github.com/nats-io/go-nats/util",
+			"Comment": "v1.2.2-31-g399fe00",
+			"Rev": "399fe00b07f048bdacbdbfdfeda39712642e6a11"
+		},
+		{
+			"ImportPath": "github.com/nats-io/nuid",
+			"Comment": "v1.0.0-2-g3cf34f9",
+			"Rev": "3cf34f9fca4e88afa9da8eabd75e3326c9941b44"
+		},
+		{
+			"ImportPath": "github.com/robfig/cron",
+			"Comment": "v1-53-gdf38d32",
+			"Rev": "df38d32658d8788cd446ba74db4bb5375c4b0cb3"
+		},
+		{
+			"ImportPath": "golang.org/x/sys/unix",
+			"Rev": "99f16d856c9836c42d24e7ab64ea72916925fa97"
+		}
+	]
+}

@@ -1,5 +1,0 @@
-package: github.com/codingconcepts/pocs/chaos/harambe
-import:
-- package: github.com/Sirupsen/logrus
-- package: github.com/nats-io/go-nats
-- package: github.com/robfig/cron

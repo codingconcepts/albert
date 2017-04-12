@@ -84,7 +84,7 @@ Agents can also be configured perform a custom kill job with the following confi
     "application": "MarketDataAPI",
     "applicationType": "custom",
     "customInstructions": [
-        "taskkill", "/f", "/t", "/im", "notepad.exe"
+        "iisreset"
     ],
 }
 ```

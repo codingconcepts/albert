@@ -8,5 +8,5 @@ install:
   - export PATH="${TRAVIS_BUILD_DIR}/vendor/_workspace/bin:$PATH"
 
 script:
-- cd pk
+- cd pkg
 - go test ./... -v

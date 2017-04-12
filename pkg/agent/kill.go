@@ -21,3 +21,18 @@ func (a *Agent) killContainer(name string) (err error) {
 	cmd := exec.Command(`$(docker stop $(docker ps -a -q --filter ancestor=%s --format="{{.ID}}"))`, name)
 	return cmd.Run()
 }
+
+func (a *Agent) killCustom() (err error) {
+	a.Logger.Info(a.CustomInstructions)
+
+	name := a.CustomInstructions[0]
+	args := a.CustomInstructions[1:]
+
+	a.Logger.WithFields(logrus.Fields{
+		"name": name,
+		"args": args,
+	}).Info("custom killing")
+
+	cmd := exec.Command(name, args...)
+	return cmd.Run()
+}

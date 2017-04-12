@@ -18,9 +18,10 @@ type Config struct {
 
 	LogLevel model.ConfigLogLevel `json:"logLevel"`
 
-	Application     string                `json:"application"`
-	ApplicationType model.ApplicationType `json:"applicationType"`
-	Identifier      string                `json:"identifier"`
+	Application        string                `json:"application"`
+	ApplicationType    model.ApplicationType `json:"applicationType"`
+	Identifier         string                `json:"identifier"`
+	CustomInstructions []string              `json:"customInstructions"`
 }
 
 // NewConfigFromFile loads Agent configuration from a
@@ -38,6 +39,28 @@ func NewConfigFromFile(path string) (c *Config, err error) {
 
 	c = new(Config)
 	err = json.Unmarshal(buffer.Bytes(), c)
+
+	return
+}
+
+func (c *Config) Validate() (err error) {
+	if c.Application == "" {
+		return ErrMissingApplication
+	}
+
+	if c.ApplicationType == model.UnknownApplicationType {
+		return ErrMissingApplicationType
+	}
+
+	if c.ApplicationType == model.CustomApplicationType {
+		if len(c.CustomInstructions) == 0 {
+			return ErrMissingCustomInstructions
+		}
+	} else {
+		if c.Identifier == "" {
+			return ErrMissingIdentifier
+		}
+	}
 
 	return
 }

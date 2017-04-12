@@ -15,21 +15,29 @@ type Agent struct {
 	KillInbox  string
 	Logger     *logrus.Logger
 
-	Application     string
-	ApplicationType model.ApplicationType
-	Identifier      string
+	Application        string
+	ApplicationType    model.ApplicationType
+	Identifier         string
+	CustomInstructions []string
 }
 
 // NewAgent returns a pointer to a new instance of an Agent.
-func NewAgent(config *Config, conn *nats.Conn, logger *logrus.Logger) (a *Agent) {
-	return &Agent{
-		Application:     config.Application,
-		ApplicationType: config.ApplicationType,
-		Connection:      conn,
-		KillInbox:       nats.NewInbox(),
-		Identifier:      config.Identifier,
-		Logger:          logger,
+func NewAgent(config *Config, conn *nats.Conn, logger *logrus.Logger) (a *Agent, err error) {
+	if err = config.Validate(); err != nil {
+		return
 	}
+
+	a = &Agent{
+		Application:        config.Application,
+		ApplicationType:    config.ApplicationType,
+		Identifier:         config.Identifier,
+		CustomInstructions: config.CustomInstructions,
+		Connection:         conn,
+		KillInbox:          nats.NewInbox(),
+		Logger:             logger,
+	}
+
+	return
 }
 
 // NewAgentFromConfig returns a pointer to a new instance of
@@ -53,8 +61,7 @@ func NewAgentFromConfig(path string) (a *Agent, err error) {
 		return
 	}
 
-	a = NewAgent(config, conn, logger)
-	return
+	return NewAgent(config, conn, logger)
 }
 
 // Start begins the process of listening for instructions from
@@ -132,6 +139,10 @@ func (a *Agent) kill() {
 		}
 	case model.MachineApplicationType:
 		if err := a.killMachine(); err != nil {
+			a.Logger.WithError(err).Error()
+		}
+	case model.CustomApplicationType:
+		if err := a.killCustom(); err != nil {
 			a.Logger.WithError(err).Error()
 		}
 	default:

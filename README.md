@@ -82,4 +82,4 @@ The contrived MarketDataAPI example might be running different agents on differe
 - [ ] Behavioural unit tests
 - [ ] Test cross-platform
 - [x] SDK to turn any application into an agent
-- [ ] Agent overrides for kill procedure (in config)
+- [x] Agent overrides for kill procedure (in config)

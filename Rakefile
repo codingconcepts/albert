@@ -5,7 +5,9 @@ agentOutput = 'albert-agent.exe'
 embeddedExampleOutput = 'albert-embedded-example.exe'
 
 task :test do
-    sh("go test $(glide novendor)")
+    Dir.chdir('pkg') do
+        sh("go test ./... -v")
+    end
 end
 
 task :nats do

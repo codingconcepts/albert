@@ -4,12 +4,8 @@ go:
 - 1.8
 
 install:
-- go get -v github.com/Masterminds/glide
-- cd $GOPATH/src/github.com/Masterminds/glide
-- go install && cd -
-- glide install
-- go get -t -v ./...
+  - export GOPATH="${TRAVIS_BUILD_DIR}/vendor/_workspace:$GOPATH"
+  - export PATH="${TRAVIS_BUILD_DIR}/vendor/_workspace/bin:$PATH"
 
 script:
-- cd pkg
 - rake test

@@ -1,6 +1,7 @@
 package agent
 
 import (
+	"os"
 	"os/exec"
 
 	"github.com/Sirupsen/logrus"
@@ -19,14 +20,20 @@ func (a *Agent) killContainer(name string) (err error) {
 	}).Info("killing container")
 
 	cmd := exec.Command(`$(docker stop $(docker ps -a -q --filter ancestor=%s --format="{{.ID}}"))`, name)
+	cmd.Stdout = os.Stdout
+	cmd.Stdin = os.Stdin
+	cmd.Stderr = os.Stderr
+
 	return cmd.Run()
 }
 
 func (a *Agent) killCustom() (err error) {
-	a.Logger.Info(a.CustomInstructions)
-
 	name := a.CustomInstructions[0]
-	args := a.CustomInstructions[1:]
+
+	var args []string
+	if len(a.CustomInstructions) > 1 {
+		args = a.CustomInstructions[1:]
+	}
 
 	a.Logger.WithFields(logrus.Fields{
 		"name": name,
@@ -34,5 +41,9 @@ func (a *Agent) killCustom() (err error) {
 	}).Info("custom killing")
 
 	cmd := exec.Command(name, args...)
+	cmd.Stdout = os.Stdout
+	cmd.Stdin = os.Stdin
+	cmd.Stderr = os.Stderr
+
 	return cmd.Run()
 }

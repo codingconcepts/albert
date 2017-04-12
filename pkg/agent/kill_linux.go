@@ -13,6 +13,10 @@ func (a *Agent) killMachine() (err error) {
 	a.Logger.Info("killing machine")
 
 	cmd := exec.Command("reboot", "-f")
+	cmd.Stdout = os.Stdout
+	cmd.Stdin = os.Stdin
+	cmd.Stderr = os.Stderr
+
 	return cmd.Run()
 }
 
@@ -22,5 +26,9 @@ func (a *Agent) killProcess(name string) (err error) {
 	}).Info("killing process")
 
 	cmd := exec.Command("kill", "-KILL", fmt.Sprintf("'pgrep %s'", name))
+	cmd.Stdout = os.Stdout
+	cmd.Stdin = os.Stdin
+	cmd.Stderr = os.Stderr
+	
 	return cmd.Run()
 }

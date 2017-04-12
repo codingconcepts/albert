@@ -77,6 +77,18 @@ The contrived MarketDataAPI example might be running different agents on differe
 }
 ```
 
+Agents can also be configured perform a custom kill job with the following configuration:
+
+``` json
+{
+    "application": "MarketDataAPI",
+    "applicationType": "custom",
+    "customInstructions": [
+        "taskkill", "/f", "/t", "/im", "notepad.exe"
+    ],
+}
+```
+
 ### Todo
 
 - [ ] Behavioural unit tests

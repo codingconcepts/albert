@@ -4,6 +4,7 @@ package agent
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 
 	"github.com/Sirupsen/logrus"
@@ -29,6 +30,6 @@ func (a *Agent) killProcess(name string) (err error) {
 	cmd.Stdout = os.Stdout
 	cmd.Stdin = os.Stdin
 	cmd.Stderr = os.Stderr
-	
+
 	return cmd.Run()
 }

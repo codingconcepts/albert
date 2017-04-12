@@ -1,4 +1,7 @@
 language: go
 
+before_install:
+- go get -u github.com/Masterminds/glide
+
 script:
-- bundle exec rake test
+- rake test

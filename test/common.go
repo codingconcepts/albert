@@ -8,6 +8,8 @@ import (
 	"reflect"
 	"runtime"
 	"testing"
+
+	"github.com/Sirupsen/logrus"
 )
 
 // Assert fails the test if the condition is false.
@@ -43,6 +45,19 @@ func Equals(tb testing.TB, expected, actual interface{}) {
 		_, file, line, _ := runtime.Caller(1)
 		fmt.Printf("%s:%d:\n\n\texp: %#v\n\n\tgot: %#v\n\n", filepath.Base(file), line, expected, actual)
 		tb.FailNow()
+	}
+}
+
+// LogEntryContainsField fails if the log entry does not contain a field
+// with the given key.
+func LogEntryContainsField(tb testing.TB, key string, expectedValue string, logEntry *logrus.Entry) {
+	if logEntry == nil {
+		tb.Fatal("log entry expected")
+	}
+
+	actual := fmt.Sprintf("%v", logEntry.Data[key])
+	if actual != expectedValue {
+		tb.Fatalf("log entry expected: '%s' but got: '%s'", expectedValue, actual)
 	}
 }
 

@@ -15,7 +15,7 @@ var (
 	// provided and the application type is not custom.
 	ErrMissingIdentifier = errors.New("missing identifier")
 
-	// ErrMissingCustomInstructions is returned if the custom application
-	// type is specified with no custom instructions.
-	ErrMissingCustomInstructions = errors.New("missing custom instructions")
+	// ErrMissingInstructions is returned if no instructions have been
+	// configured for the agent.
+	ErrMissingInstructions = errors.New("missing instructions")
 )

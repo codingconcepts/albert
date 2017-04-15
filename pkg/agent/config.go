@@ -18,10 +18,8 @@ type Config struct {
 
 	LogLevel model.ConfigLogLevel `json:"logLevel"`
 
-	Application        string                `json:"application"`
-	ApplicationType    model.ApplicationType `json:"applicationType"`
-	Identifier         string                `json:"identifier"`
-	CustomInstructions []string              `json:"customInstructions"`
+	Application  string   `json:"application"`
+	Instructions []string `json:"instructions"`
 }
 
 // NewConfigFromFile loads Agent configuration from a
@@ -43,23 +41,14 @@ func NewConfigFromFile(path string) (c *Config, err error) {
 	return
 }
 
+// Validate performs basic config-time validation.
 func (c *Config) Validate() (err error) {
 	if c.Application == "" {
 		return ErrMissingApplication
 	}
 
-	if c.ApplicationType == model.UnknownApplicationType {
-		return ErrMissingApplicationType
-	}
-
-	if c.ApplicationType == model.CustomApplicationType {
-		if len(c.CustomInstructions) == 0 {
-			return ErrMissingCustomInstructions
-		}
-	} else {
-		if c.Identifier == "" {
-			return ErrMissingIdentifier
-		}
+	if len(c.Instructions) == 0 {
+		return ErrMissingInstructions
 	}
 
 	return

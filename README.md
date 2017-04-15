@@ -56,43 +56,49 @@ To clear this up, here's an example which kills 50% of a make-believe `MarketDat
 
 ### Agent
 
-An agent is configured to kill a process, a machine, a Docker container (not tested), or a network interface (not developed).
+Agents can be configured to kill anything you like (see "Kill Instructions")
 
 As with the orchestrator, here's some example configuration (with the obvious bits omitted) to help you make sense of things:
 
 ``` json
 {
     "application": "MarketDataAPI",
-    "applicationType": "process",
-    "identifier": "market.exe"
+    "instructions": [ "taskkill", "/f", "/t", "/im", "market.exe" ]
 }
 ```
 
-The contrived MarketDataAPI example might be running different agents on different OS's to do its job.  For example, there might be a WebAPI running in IIS serving customers and a Go web server running inside a Docker container on a Linux machine serving internal interconnected systems.  To achieve this, just run an agent on each machine with config to suit the job it's performing.  Note, they're both running as part of the MarketDataAPI application which needs to match up to the orchestrator's application name.
+This contrived MarketDataAPI example might be running different agents on different OS's to do its job.  For example, there might be a WebAPI running in IIS serving customers and a Go web server running inside a Docker container on a Linux machine serving internal interconnected systems.  To achieve this, just run an agent on each machine with config to suit the job it's performing.  Note, they're both running as part of the MarketDataAPI application which needs to match up to the orchestrator's application name.
 
-``` json
-{
-    "application": "MarketDataAPI",
-    "applicationType": "docker",
-    "identifier": "market-data"
-}
-```
 
-Agents can also be configured perform a custom kill job with the following configuration:
+### Kill Instructions
 
-``` json
-{
-    "application": "MarketDataAPI",
-    "applicationType": "custom",
-    "customInstructions": [
-        "iisreset"
-    ],
-}
-```
+<table>
+    <tr>
+        <th>&nbsp;</th>
+        <th>Windows</th>
+        <th>Linux</th>
+    </tr>
+    <tr>
+        <td>Machine</td>
+        <td>"shutdown", "-t", "0", "-r", "-f"</td>
+        <td>"reboot", "-f"</td>
+    </tr>
+    <tr>
+        <td>Process</td>
+        <td>"taskkill", "/f", "/t", "/im", "PROCNAME.exe"</td>
+        <td>"kill", "-KILL", "'pgrep PROCNAME'"</td>
+    </tr>
+    <tr>
+        <td>Docker image</td>
+        <td colspan="2">$(docker stop $(docker ps -a -q --filter ancestor=IMAGENAME --format="{{.ID}}"))</td>
+    </tr>
+
+</table>
 
 ### Todo
 
 - [ ] Behavioural unit tests
 - [ ] Test cross-platform
+- [ ] Decentralised logging (existing hook for Logrus?)
 - [x] SDK to turn any application into an agent
 - [x] Agent overrides for kill procedure (in config)

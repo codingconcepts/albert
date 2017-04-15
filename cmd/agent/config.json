@@ -4,11 +4,7 @@
     "natsPass": "Imk)^InzID2QM*YMWPchUZ",
     
     "application": "notepad",
-    "applicationType": "custom",
-    "identifier": "notepad.exe",
-    "customInstructions": [
-        "taskkill", "/f", "/t", "/im", "notepad.exe"
-    ],
+    "instructions": [ "taskkill", "/f", "/t", "/im", "notepad.exe" ],
 
     "logLevel": "info"
 }

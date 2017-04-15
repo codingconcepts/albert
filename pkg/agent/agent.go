@@ -2,6 +2,7 @@ package agent
 
 import (
 	"os"
+	"os/exec"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/codingconcepts/albert/pkg/model"
@@ -15,10 +16,8 @@ type Agent struct {
 	KillInbox  string
 	Logger     *logrus.Logger
 
-	Application        string
-	ApplicationType    model.ApplicationType
-	Identifier         string
-	CustomInstructions []string
+	Application  string
+	Instructions []string
 }
 
 // NewAgent returns a pointer to a new instance of an Agent.
@@ -28,13 +27,11 @@ func NewAgent(config *Config, conn *nats.Conn, logger *logrus.Logger) (a *Agent,
 	}
 
 	a = &Agent{
-		Application:        config.Application,
-		ApplicationType:    config.ApplicationType,
-		Identifier:         config.Identifier,
-		CustomInstructions: config.CustomInstructions,
-		Connection:         conn,
-		KillInbox:          nats.NewInbox(),
-		Logger:             logger,
+		Application:  config.Application,
+		Instructions: config.Instructions,
+		Connection:   conn,
+		KillInbox:    nats.NewInbox(),
+		Logger:       logger,
 	}
 
 	return
@@ -126,28 +123,26 @@ func (a *Agent) chanSubscribe(topic string) (c chan *nats.Msg, stop func(), err 
 }
 
 func (a *Agent) kill() {
-	switch a.ApplicationType {
-	case model.DummyApplicationType:
-		a.killSimulation()
-	case model.DockerApplicationType:
-		if err := a.killContainer(a.Identifier); err != nil {
-			a.Logger.WithError(err).Error()
-		}
-	case model.ProcessApplicationType:
-		if err := a.killProcess(a.Identifier); err != nil {
-			a.Logger.WithError(err).Error()
-		}
-	case model.MachineApplicationType:
-		if err := a.killMachine(); err != nil {
-			a.Logger.WithError(err).Error()
-		}
-	case model.CustomApplicationType:
-		if err := a.killCustom(); err != nil {
-			a.Logger.WithError(err).Error()
-		}
-	default:
-		a.Logger.WithFields(logrus.Fields{
-			"applicationType": a.ApplicationType,
-		}).Error("unknown application type")
+	name := a.Instructions[0]
+
+	var args []string
+	if len(a.Instructions) > 1 {
+		args = a.Instructions[1:]
+	}
+
+	a.Logger.WithFields(logrus.Fields{
+		"name": name,
+		"args": args,
+	}).Info("kill")
+
+	cmd := exec.Command(name, args...)
+	cmd.Stdout = os.Stdout
+	cmd.Stdin = os.Stdin
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Run(); err != nil {
+		a.Logger.WithError(err).Error()
+	} else {
+		a.Logger.Info("success")
 	}
 }

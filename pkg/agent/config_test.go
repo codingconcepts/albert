@@ -5,59 +5,49 @@ import (
 	"testing"
 
 	"github.com/codingconcepts/albert/pkg/agent"
-	"github.com/codingconcepts/albert/pkg/model"
 	"github.com/codingconcepts/albert/test"
 )
 
 var (
-	application        = "application"
-	applicationType    = model.ProcessApplicationType
-	identifier         = "identifier"
-	customInstructions = []string{"one", "two", "three"}
+	application  = "notepad"
+	instructions = []string{"taskkill", "/f", "/t", "/im", "PROCNAME.exe"}
 )
 
-func TestValidateMissingApplication(t *testing.T) {
-	c := parseConfig(`
-	{
-		"applicationType": "process",
-    	"identifier": "notepad.exe"
-	}`)
+func TestValidateWithValidConfig(t *testing.T) {
+	c := agent.Config{
+		Application:  application,
+		Instructions: instructions,
+	}
+
+	err := c.Validate()
+	test.ErrorNil(t, err)
+	test.Equals(t, application, c.Application)
+	test.Equals(t, instructions, c.Instructions)
+}
+
+func TestValidateEmptyConfig(t *testing.T) {
+	c := agent.Config{}
 
 	err := c.Validate()
 	test.Equals(t, err, agent.ErrMissingApplication)
 }
 
-func TestValidateMissingApplicationType(t *testing.T) {
-	c := parseConfig(`
-	{
-		"application": "notepad",
-    	"identifier": "notepad.exe"
-	}`)
+func TestValidateMissingApplication(t *testing.T) {
+	c := agent.Config{
+		Instructions: instructions,
+	}
 
 	err := c.Validate()
-	test.Equals(t, err, agent.ErrMissingApplicationType)
+	test.Equals(t, err, agent.ErrMissingApplication)
 }
 
-func TestValidateMissingIdentifier(t *testing.T) {
-	c := parseConfig(`
-	{
-		"application": "notepad",
-		"applicationType": "process"
-	}`)
+func TestValidateMissingInstructions(t *testing.T) {
+	c := agent.Config{
+		Application: application,
+	}
 
 	err := c.Validate()
-	test.Equals(t, err, agent.ErrMissingIdentifier)
-}
-
-func TestValidateMissingCustomInstructions(t *testing.T) {
-	c := parseConfig(`
-	{
-		"application": "notepad",
-		"applicationType": "custom"
-	}`)
-
-	err := c.Validate()
-	test.Equals(t, err, agent.ErrMissingCustomInstructions)
+	test.Equals(t, err, agent.ErrMissingInstructions)
 }
 
 func parseConfig(jsonConfig string) (c *agent.Config) {

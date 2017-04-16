@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
-	"os"
 
 	"github.com/codingconcepts/albert/pkg/model"
 )
@@ -23,15 +22,10 @@ type Config struct {
 }
 
 // NewConfigFromFile loads Agent configuration from a
-// given file path and returns any errors encountered.
-func NewConfigFromFile(path string) (c *Config, err error) {
-	file, err := os.Open(path)
-	if err != nil {
-		return
-	}
-
+// given reader and returns any errors encountered.
+func NewConfigFromReader(reader io.Reader) (c *Config, err error) {
 	buffer := new(bytes.Buffer)
-	if _, err = io.Copy(buffer, file); err != nil {
+	if _, err = io.Copy(buffer, reader); err != nil {
 		return
 	}
 

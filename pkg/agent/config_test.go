@@ -1,20 +1,24 @@
-package agent_test
+package agent
 
 import (
 	"encoding/json"
+	"strings"
 	"testing"
 
-	"github.com/codingconcepts/albert/pkg/agent"
 	"github.com/codingconcepts/albert/test"
 )
 
-var (
-	application  = "notepad"
-	instructions = []string{"taskkill", "/f", "/t", "/im", "PROCNAME.exe"}
-)
+func TestNewConfigFromReader(t *testing.T) {
+	reader := strings.NewReader(config)
+
+	c, err := NewConfigFromReader(reader)
+	test.ErrorNil(t, err)
+	test.Equals(t, application, c.Application)
+	test.Equals(t, instructions, c.Instructions)
+}
 
 func TestValidateWithValidConfig(t *testing.T) {
-	c := agent.Config{
+	c := Config{
 		Application:  application,
 		Instructions: instructions,
 	}
@@ -26,31 +30,31 @@ func TestValidateWithValidConfig(t *testing.T) {
 }
 
 func TestValidateEmptyConfig(t *testing.T) {
-	c := agent.Config{}
+	c := Config{}
 
 	err := c.Validate()
-	test.Equals(t, err, agent.ErrMissingApplication)
+	test.Equals(t, err, ErrMissingApplication)
 }
 
 func TestValidateMissingApplication(t *testing.T) {
-	c := agent.Config{
+	c := Config{
 		Instructions: instructions,
 	}
 
 	err := c.Validate()
-	test.Equals(t, err, agent.ErrMissingApplication)
+	test.Equals(t, err, ErrMissingApplication)
 }
 
 func TestValidateMissingInstructions(t *testing.T) {
-	c := agent.Config{
+	c := Config{
 		Application: application,
 	}
 
 	err := c.Validate()
-	test.Equals(t, err, agent.ErrMissingInstructions)
+	test.Equals(t, err, ErrMissingInstructions)
 }
 
-func parseConfig(jsonConfig string) (c *agent.Config) {
+func parseConfig(jsonConfig string) (c *Config) {
 	json.Unmarshal([]byte(jsonConfig), &c)
 	return
 }

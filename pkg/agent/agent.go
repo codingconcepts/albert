@@ -5,7 +5,6 @@ import (
 	"os/exec"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/codingconcepts/albert/pkg/model"
 	nats "github.com/nats-io/go-nats"
 )
 
@@ -35,30 +34,6 @@ func NewAgent(config *Config, conn *nats.Conn, logger *logrus.Logger) (a *Agent,
 	}
 
 	return
-}
-
-// NewAgentFromConfig returns a pointer to a new instance of
-// and Agent which is auto-configured from a config file.
-func NewAgentFromConfig(path string) (a *Agent, err error) {
-	config, err := NewConfigFromFile(path)
-	if err != nil {
-		return
-	}
-
-	logger := model.NewLogger(os.Stdout, config.LogLevel.Level)
-
-	opts := nats.Options{
-		User:     config.NatsUser,
-		Password: config.NatsPass,
-		Servers:  config.NatsHosts,
-	}
-
-	conn, err := opts.Connect()
-	if err != nil {
-		return
-	}
-
-	return NewAgent(config, conn, logger)
 }
 
 // Start begins the process of listening for instructions from

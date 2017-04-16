@@ -21,7 +21,7 @@ type Config struct {
 	Instructions []string `json:"instructions"`
 }
 
-// NewConfigFromFile loads Agent configuration from a
+// NewConfigFromReader loads Agent configuration from a
 // given reader and returns any errors encountered.
 func NewConfigFromReader(reader io.Reader) (c *Config, err error) {
 	buffer := new(bytes.Buffer)

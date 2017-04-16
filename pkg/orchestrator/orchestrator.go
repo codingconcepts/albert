@@ -24,8 +24,12 @@ type Orchestrator struct {
 
 // NewOrchestrator returns a pointer to a new instance of
 // an Orchestrator.
-func NewOrchestrator(c *Config, conn *nats.Conn, logger *logrus.Logger) (o *Orchestrator) {
-	return &Orchestrator{
+func NewOrchestrator(c *Config, conn *nats.Conn, logger *logrus.Logger) (o *Orchestrator, err error) {
+	if err = c.Validate(); err != nil {
+		return
+	}
+
+	o = &Orchestrator{
 		Connection:   conn,
 		Applications: c.Applications,
 		Logger:       logger,
@@ -33,6 +37,8 @@ func NewOrchestrator(c *Config, conn *nats.Conn, logger *logrus.Logger) (o *Orch
 		gatherTimeout:  c.GatherTimeout.Duration,
 		gatherChanSize: c.GatherChanSize,
 	}
+
+	return
 }
 
 // Start begins a number of jobs to process each of the applications

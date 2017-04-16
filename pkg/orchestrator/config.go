@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
-	"os"
+	"time"
 
 	"github.com/codingconcepts/albert/pkg/model"
 )
@@ -23,21 +23,33 @@ type Config struct {
 	Applications Applications `json:"applications"`
 }
 
-// NewConfigFromFile loads Orchestrator configuration from a
+// NewConfigFromReader loads Orchestrator configuration from a
 // given file path and returns any errors encountered.
-func NewConfigFromFile(path string) (c *Config, err error) {
-	file, err := os.Open(path)
-	if err != nil {
-		return
-	}
-
+func NewConfigFromReader(reader io.Reader) (c *Config, err error) {
 	buffer := new(bytes.Buffer)
-	if _, err = io.Copy(buffer, file); err != nil {
+	if _, err = io.Copy(buffer, reader); err != nil {
 		return
 	}
 
 	c = new(Config)
 	err = json.Unmarshal(buffer.Bytes(), c)
+
+	return
+}
+
+// Validate performs basic config-time validation.
+func (c *Config) Validate() (err error) {
+	if len(c.Applications) == 0 {
+		return ErrMissingApplications
+	}
+
+	if c.GatherTimeout.Duration == time.Duration(0) {
+		return ErrMissingGatherTimeout
+	}
+
+	if c.GatherChanSize == 0 {
+		return ErrInvalidGatherChanSize
+	}
 
 	return
 }

@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/Sirupsen/logrus"
@@ -12,11 +11,7 @@ import (
 )
 
 func main() {
-	config, err := orchestrator.NewConfigFromFile("config.json")
-	if err != nil {
-		log.Fatal(err)
-	}
-
+	config := mustLoadConfig("config.json")
 	logger := model.NewLogger(os.Stdout, config.LogLevel.Level)
 
 	opts := nats.Options{
@@ -27,10 +22,14 @@ func main() {
 
 	conn, err := opts.Connect()
 	if err != nil {
+		return
+	}
+
+	o, err := orchestrator.NewOrchestrator(config, conn, logger)
+	if err != nil {
 		logger.Fatal(err)
 	}
 
-	o := orchestrator.NewOrchestrator(config, conn, logger)
 	go o.Start()
 	defer o.Stop()
 
@@ -44,4 +43,17 @@ func main() {
 
 	logger.Info("orchestrator started successfully")
 	fmt.Scanln()
+}
+
+func mustLoadConfig(path string) (config *orchestrator.Config) {
+	file, err := os.Open(path)
+	if err != nil {
+		panic(err)
+	}
+
+	if config, err = orchestrator.NewConfigFromReader(file); err != nil {
+		panic(err)
+	}
+
+	return
 }

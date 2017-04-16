@@ -8,7 +8,7 @@ import (
 	nats "github.com/nats-io/go-nats"
 )
 
-func TestAgentConfigPropertiesAssigned(t *testing.T) {
+func TestNewAgentConfigPropertiesAssigned(t *testing.T) {
 	c := &Config{
 		Application:  application,
 		Instructions: instructions,
@@ -19,4 +19,11 @@ func TestAgentConfigPropertiesAssigned(t *testing.T) {
 
 	test.Equals(t, c.Application, a.Application)
 	test.Equals(t, c.Instructions, a.Instructions)
+}
+
+func TestNewAgentWithInvalidConfig(t *testing.T) {
+	c := &Config{}
+
+	_, err := NewAgent(c, &nats.Conn{}, logrus.New())
+	test.ErrorNotNil(t, err)
 }

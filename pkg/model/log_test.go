@@ -31,7 +31,10 @@ func TestFormatProvidesUTCTime(t *testing.T) {
 		Formatter: &logrus.TextFormatter{},
 	}
 
-	bstTime, err := time.Parse(time.RFC1123, "Tue, 28 Apr 2017 07:33:01 BST")
+	london, err := time.LoadLocation("Europe/London")
+	test.ErrorNil(t, err)
+
+	bstTime, err := time.ParseInLocation(time.RFC1123, "Tue, 28 Apr 2017 07:33:01 BST", london)
 	test.ErrorNil(t, err)
 
 	logBytes, err := formatter.Format(&logrus.Entry{Time: bstTime})

@@ -10,6 +10,23 @@ task :test do
     end
 end
 
+task :cover do
+    Dir.chdir('pkg\\agent') do
+        sh("go test --coverprofile=coverage.out")
+        sh("go tool cover --html=coverage.out")
+    end
+
+    Dir.chdir('pkg\\model') do
+        sh("go test --coverprofile=coverage.out")
+        sh("go tool cover --html=coverage.out")
+    end
+
+    Dir.chdir('pkg\\orchestrator') do
+        sh("go test --coverprofile=coverage.out")
+        sh("go tool cover --html=coverage.out")
+    end
+end
+
 task :nats do
     Dir.chdir('cmd\\nats') do
         sh("start gnatsd --config nats.conf")

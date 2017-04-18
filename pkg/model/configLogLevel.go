@@ -1,7 +1,6 @@
 package model
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/Sirupsen/logrus"
@@ -20,9 +19,4 @@ func (d *ConfigLogLevel) UnmarshalJSON(b []byte) (err error) {
 	d.Level, err = logrus.ParseLevel(raw)
 
 	return
-}
-
-// MarshalJSON marshals a ConfigLogLevel to JSON.
-func (d ConfigLogLevel) MarshalJSON() (b []byte, err error) {
-	return []byte(fmt.Sprintf(`"%s"`, d.Level.String())), nil
 }

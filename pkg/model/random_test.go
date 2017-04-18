@@ -75,3 +75,12 @@ func TestTakeRandomTakesNoneWhenPercentageIsZero(t *testing.T) {
 		t.Fatalf("expected 3 items but got %d", len(sub))
 	}
 }
+
+func TestTakeRandomTakesNoneWhenPercentageIsTiny(t *testing.T) {
+	applications := []string{"a", "b", "c"}
+	sub := model.TakeRandom(applications, 0.01)
+
+	if len(sub) != 0 {
+		t.Fatalf("expected 3 items but got %d", len(sub))
+	}
+}

@@ -24,11 +24,11 @@ func TakeRandom(input []string, perc float64) (output []string) {
 	}
 
 	amount := int(math.Trunc((float64(len(input)) / 1) * perc))
-	output = make([]string, amount)
-
 	if amount < 1 {
 		return
 	}
+
+	output = make([]string, amount)
 
 	for i := 0; i < amount; i++ {
 		index := Between(i, len(input))

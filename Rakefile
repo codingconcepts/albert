@@ -4,29 +4,6 @@ orchOutput = 'albert-orchestrator.exe'
 agentOutput = 'albert-agent.exe'
 embeddedExampleOutput = 'albert-embedded-example.exe'
 
-task :test do
-    Dir.chdir('pkg') do
-        sh("go test ./... -v")
-    end
-end
-
-task :cover do
-    Dir.chdir('pkg\\agent') do
-        sh("go test --coverprofile=coverage.out")
-        sh("go tool cover --html=coverage.out")
-    end
-
-    Dir.chdir('pkg\\model') do
-        sh("go test --coverprofile=coverage.out")
-        sh("go tool cover --html=coverage.out")
-    end
-
-    Dir.chdir('pkg\\orchestrator') do
-        sh("go test --coverprofile=coverage.out")
-        sh("go tool cover --html=coverage.out")
-    end
-end
-
 task :nats do
     Dir.chdir('cmd\\nats') do
         sh("start gnatsd --config nats.conf")
@@ -78,5 +55,36 @@ task :stop do
         sh("taskkill", "/f", "/t", "/im", "gnatsd.exe")
     rescue
         puts "error caught stopping gnatsd.exe"
+    end
+end
+
+task :test do
+    Dir.chdir('pkg') do
+        sh("go test ./... -v")
+    end
+end
+
+namespace :cover do
+    task :agent do
+        Dir.chdir('pkg\\agent') do
+            Rake::Task["cover:cover"].execute
+        end
+    end
+
+    task :model do
+        Dir.chdir('pkg\\model') do
+            Rake::Task["cover:cover"].execute
+        end
+    end
+
+    task :orchestrator do
+        Dir.chdir('pkg\\orchestrator') do
+            Rake::Task["cover:cover"].execute
+        end
+    end
+
+    task :cover do
+        sh("go test --coverprofile=coverage.out")
+        sh("go tool cover --html=coverage.out")
     end
 end

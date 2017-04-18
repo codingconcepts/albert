@@ -1,6 +1,7 @@
 package model
 
 import (
+	"log"
 	"os"
 	"strings"
 	"testing"
@@ -35,5 +36,7 @@ func TestFormatProvidesUTCTime(t *testing.T) {
 
 	logBytes, err := formatter.Format(&logrus.Entry{Time: bstTime})
 	test.ErrorNil(t, err)
+
+	log.Println(string(logBytes))
 	test.Assert(t, strings.Contains(string(logBytes), `time="2017-04-28T06:33:01Z"`))
 }

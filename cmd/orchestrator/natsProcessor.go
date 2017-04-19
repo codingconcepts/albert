@@ -7,9 +7,7 @@ import (
 	nats "github.com/nats-io/go-nats"
 )
 
-// NatsProcessor performs a scatter-gather operation
-// using NATS as the underlying message bus.
-type NatsProcessor struct {
+type natsProcessor struct {
 	conn           *nats.Conn
 	gatherChanSize int
 	gatherTimeout  time.Duration
@@ -17,8 +15,8 @@ type NatsProcessor struct {
 
 // NewNatsProcessor returns the pointer to a new instance of a
 // NatsProcessor.
-func newNatsProcessor(conn *nats.Conn, config *orchestrator.Config) (p *NatsProcessor) {
-	return &NatsProcessor{
+func newNatsProcessor(conn *nats.Conn, config *orchestrator.Config) (p *natsProcessor) {
+	return &natsProcessor{
 		conn:           conn,
 		gatherChanSize: config.GatherChanSize,
 		gatherTimeout:  config.GatherTimeout.Duration,
@@ -28,7 +26,7 @@ func newNatsProcessor(conn *nats.Conn, config *orchestrator.Config) (p *NatsProc
 // Gather performs a "scatter gather" operation against
 // an unknown number of Applications.
 // See http://bit.ly/2oEiquY for more information.
-func (p *NatsProcessor) Gather(application string) (msgs []string, err error) {
+func (p *natsProcessor) Gather(application string) (msgs []string, err error) {
 	msgs = []string{}
 	responses := make(chan *nats.Msg, p.gatherChanSize)
 	defer close(responses)
@@ -56,6 +54,6 @@ func (p *NatsProcessor) Gather(application string) (msgs []string, err error) {
 
 // IssueKill publishes a kill command for a given Application
 // and ApplicationType combination.
-func (p *NatsProcessor) IssueKill(topic string) (err error) {
+func (p *natsProcessor) IssueKill(topic string) (err error) {
 	return p.conn.Publish(topic, nil)
 }

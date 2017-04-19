@@ -77,7 +77,7 @@ namespace :cover do
         end
     end
 
-    task :orchestrator do
+    task :orch do
         Dir.chdir('pkg\\orchestrator') do
             Rake::Task["cover:cover"].execute
         end

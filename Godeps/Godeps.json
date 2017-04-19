@@ -12,6 +12,11 @@
 			"Rev": "0208149b40d863d2c1a2f8fe5753096a9cf2cc8b"
 		},
 		{
+			"ImportPath": "github.com/Sirupsen/logrus/hooks/test",
+			"Comment": "v0.11.4",
+			"Rev": "0208149b40d863d2c1a2f8fe5753096a9cf2cc8b"
+		},
+		{
 			"ImportPath": "github.com/nats-io/go-nats",
 			"Comment": "v1.2.2-31-g399fe00",
 			"Rev": "399fe00b07f048bdacbdbfdfeda39712642e6a11"

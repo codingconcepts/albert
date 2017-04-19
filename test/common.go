@@ -48,6 +48,24 @@ func Equals(tb testing.TB, expected, actual interface{}) {
 	}
 }
 
+// AnyLogEntryContainsMessage fails if the log entries message
+// does not match the expected value.
+func AnyLogEntryContainsMessage(tb testing.TB, expectedValue string, logEntries []*logrus.Entry) {
+	if len(logEntries) == 0 {
+		tb.Fatal("log entry expected")
+	}
+
+	for _, logEntry := range logEntries {
+		if logEntry.Message == expectedValue {
+			return
+		}
+	}
+
+	// if we get here, none of the log entries contain the
+	// the message we were looking for.
+	tb.Fatalf("log entry expected: '%s'", expectedValue)
+}
+
 // LogEntryContainsField fails if the log entry does not contain a field
 // with the given key.
 func LogEntryContainsField(tb testing.TB, key string, expectedValue string, logEntry *logrus.Entry) {
@@ -59,6 +77,24 @@ func LogEntryContainsField(tb testing.TB, key string, expectedValue string, logE
 	if actual != expectedValue {
 		tb.Fatalf("log entry expected: '%s' but got: '%s'", expectedValue, actual)
 	}
+}
+
+// AnyLogEntryContainsField fails if no log entry is found to contain a field
+// with the given key.
+func AnyLogEntryContainsField(tb testing.TB, key string, expectedValue interface{}, logEntries []*logrus.Entry) {
+	if len(logEntries) == 0 {
+		tb.Fatal("log entries expected")
+	}
+
+	for _, logEntry := range logEntries {
+		if expectedValue == logEntry.Data[key] {
+			return
+		}
+	}
+
+	// if we get here, none of the given entries contain
+	// the value we were looking for
+	tb.Fatalf("log entry expected: '%s' but none found", expectedValue)
 }
 
 // MakeGetRequest performs a GET request using a given handler.

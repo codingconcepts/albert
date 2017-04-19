@@ -25,7 +25,8 @@ func main() {
 		return
 	}
 
-	o, err := orchestrator.NewOrchestrator(config, conn, logger)
+	natsProcessor := newNatsProcessor(conn, config)
+	o, err := orchestrator.NewOrchestrator(config, natsProcessor, logger)
 	if err != nil {
 		logger.Fatal(err)
 	}

@@ -1,41 +1,39 @@
 package orchestrator
 
 import (
-	"time"
-
 	"github.com/Sirupsen/logrus"
 	"github.com/codingconcepts/albert/pkg/model"
-	nats "github.com/nats-io/go-nats"
 	"github.com/robfig/cron"
 )
 
 // Orchestrator holds the necessary information to process
 // Application instances.
 type Orchestrator struct {
-	Connection   *nats.Conn
+	Processor    Processor
 	Applications Applications
+	Logger       *logrus.Logger
 
-	Logger *logrus.Logger
+	cronRunner *cron.Cron
+}
 
-	cronRunner     *cron.Cron
-	gatherTimeout  time.Duration
-	gatherChanSize int
+// Processor defines the communicative behaviour of
+// an Orchestrator.
+type Processor interface {
+	Gather(application string) (resps []string, err error)
+	IssueKill(topic string) (err error)
 }
 
 // NewOrchestrator returns a pointer to a new instance of
 // an Orchestrator.
-func NewOrchestrator(c *Config, conn *nats.Conn, logger *logrus.Logger) (o *Orchestrator, err error) {
+func NewOrchestrator(c *Config, processor Processor, logger *logrus.Logger) (o *Orchestrator, err error) {
 	if err = c.Validate(); err != nil {
 		return
 	}
 
 	o = &Orchestrator{
-		Connection:   conn,
+		Processor:    processor,
 		Applications: c.Applications,
 		Logger:       logger,
-
-		gatherTimeout:  c.GatherTimeout.Duration,
-		gatherChanSize: c.GatherChanSize,
 	}
 
 	return
@@ -58,17 +56,16 @@ func (o *Orchestrator) Start() {
 // Stop tears down the Orchestrator.
 func (o *Orchestrator) Stop() {
 	o.cronRunner.Stop()
-	o.Connection.Close()
 }
 
 // Process makes a request for Applications and the performs a
 // set of kill operations on them.
 func (o *Orchestrator) Process(a Application) {
-	agents, err := o.ScatterGather(a.Name)
+	agents, err := o.Processor.Gather(a.Name)
 	if err != nil {
 		o.Logger.WithFields(logrus.Fields{
 			"name": a.Name,
-		}).WithError(err).Error("error occurred processing application")
+		}).WithError(err).Error("error occurred gathering applications")
 		return
 	}
 
@@ -82,47 +79,14 @@ func (o *Orchestrator) Process(a Application) {
 	}).Info("scatter gather responses received")
 
 	for _, topic := range randomAgents {
-		if err := o.IssueKillCommand(topic); err != nil {
-			o.Logger.Error(err)
+		o.Logger.WithFields(logrus.Fields{
+			"topic": topic,
+		}).Info("published kill")
+
+		if err := o.Processor.IssueKill(topic); err != nil {
+			o.Logger.WithFields(logrus.Fields{
+				"name": a.Name,
+			}).WithError(err).Error("error occurred issuing kill command")
 		}
 	}
-}
-
-// ScatterGather performs a "scatter gather" operation against
-// an unknown number of Applications.
-// See http://bit.ly/2oEiquY for more information.
-func (o *Orchestrator) ScatterGather(application string) (msgs []string, err error) {
-	msgs = []string{}
-	responses := make(chan *nats.Msg, o.gatherChanSize)
-	defer close(responses)
-
-	reply := nats.NewInbox()
-	sub, err := o.Connection.ChanQueueSubscribe(reply, "", responses)
-	if err != nil {
-		return
-	}
-	defer sub.Unsubscribe()
-
-	if err = o.Connection.PublishRequest(application, reply, nil); err != nil {
-		return
-	}
-
-	for {
-		select {
-		case <-time.After(o.gatherTimeout):
-			return
-		case msg := <-responses:
-			msgs = append(msgs, msg.Reply)
-		}
-	}
-}
-
-// IssueKillCommand publishes a kill command for a given Application
-// and ApplicationType combination.
-func (o *Orchestrator) IssueKillCommand(topic string) (err error) {
-	o.Logger.WithFields(logrus.Fields{
-		"topic": topic,
-	}).Info("published kill")
-
-	return o.Connection.Publish(topic, nil)
 }

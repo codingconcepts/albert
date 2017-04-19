@@ -5,7 +5,6 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/codingconcepts/albert/test"
-	nats "github.com/nats-io/go-nats"
 )
 
 func TestNewOrchestratorConfigPropertiesAssigned(t *testing.T) {
@@ -15,17 +14,75 @@ func TestNewOrchestratorConfigPropertiesAssigned(t *testing.T) {
 		GatherTimeout:  gatherTimeout,
 	}
 
-	o, err := NewOrchestrator(c, &nats.Conn{}, logrus.New())
+	p := &mockProcessor{}
+	o, err := NewOrchestrator(c, p, logrus.New())
 	test.ErrorNil(t, err)
 
 	test.Equals(t, c.Applications, o.Applications)
-	test.Equals(t, c.GatherChanSize, o.gatherChanSize)
-	test.Equals(t, c.GatherTimeout.Duration, o.gatherTimeout)
 }
 
 func TestNewOrchestratorWithInvalidConfig(t *testing.T) {
 	c := &Config{}
 
-	_, err := NewOrchestrator(c, &nats.Conn{}, logrus.New())
+	p := &mockProcessor{}
+	_, err := NewOrchestrator(c, p, logrus.New())
 	test.ErrorNotNil(t, err)
+}
+
+func TestProcessHappyPath(t *testing.T) {
+	c := &Config{
+		Applications:   applications,
+		GatherChanSize: gatherChanSize,
+		GatherTimeout:  gatherTimeout,
+	}
+
+	p := &mockProcessor{}
+	o, err := NewOrchestrator(c, p, logger)
+	test.ErrorNil(t, err)
+
+	hook.Reset()
+	o.Process(testApplication)
+
+	test.AnyLogEntryContainsMessage(t, "scatter gather responses received", hook.Entries)
+	test.AnyLogEntryContainsField(t, "totalCount", 2, hook.Entries)
+	test.AnyLogEntryContainsField(t, "killCount", 1, hook.Entries)
+	test.AnyLogEntryContainsField(t, "name", "notepad", hook.Entries)
+	test.AnyLogEntryContainsMessage(t, "published kill", hook.Entries)
+	test.AnyLogEntryContainsField(t, "topic", exampleTopic, hook.Entries)
+}
+
+func TestProcessFailToGather(t *testing.T) {
+	c := &Config{
+		Applications:   applications,
+		GatherChanSize: gatherChanSize,
+		GatherTimeout:  gatherTimeout,
+	}
+
+	p := &mockProcessor{
+		failToGather: true,
+	}
+	o, err := NewOrchestrator(c, p, logger)
+	test.ErrorNil(t, err)
+
+	o.Process(testApplication)
+
+	test.LogEntryContainsField(t, "error", errSadGather.Error(), hook.LastEntry())
+}
+
+func TestProcessFailToIssueKill(t *testing.T) {
+	c := &Config{
+		Applications:   applications,
+		GatherChanSize: gatherChanSize,
+		GatherTimeout:  gatherTimeout,
+	}
+
+	p := &mockProcessor{
+		failToIssueKill: true,
+	}
+	o, err := NewOrchestrator(c, p, logger)
+	test.ErrorNil(t, err)
+
+	o.Process(testApplication)
+
+	test.LogEntryContainsField(t, "error", errSadIssueKill.Error(), hook.LastEntry())
 }

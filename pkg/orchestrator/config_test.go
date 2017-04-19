@@ -1,6 +1,7 @@
 package orchestrator
 
 import (
+	"errors"
 	"strings"
 	"testing"
 
@@ -15,6 +16,19 @@ func TestNewConfigFromReader(t *testing.T) {
 	test.Equals(t, applications, c.Applications)
 	test.Equals(t, gatherChanSize, c.GatherChanSize)
 	test.Equals(t, gatherTimeout, c.GatherTimeout)
+}
+
+type errorReader struct{}
+
+func (r *errorReader) Read(data []byte) (n int, err error) {
+	return 0, errors.New("error reading")
+}
+
+func TestNewConfigFromReaderWithError(t *testing.T) {
+	reader := &errorReader{}
+
+	_, err := NewConfigFromReader(reader)
+	test.ErrorNotNil(t, err)
 }
 
 func TestValidateWithValidConfig(t *testing.T) {

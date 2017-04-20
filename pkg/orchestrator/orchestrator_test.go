@@ -52,37 +52,28 @@ func TestProcessHappyPath(t *testing.T) {
 }
 
 func TestProcessFailToGather(t *testing.T) {
-	c := &Config{
-		Applications:   applications,
-		GatherChanSize: gatherChanSize,
-		GatherTimeout:  gatherTimeout,
-	}
-
-	p := &mockProcessor{
-		failToGather: true,
-	}
-	o, err := NewOrchestrator(c, p, logger)
-	test.ErrorNil(t, err)
-
-	o.Process(testApplication)
+	processFailure(t, &mockProcessor{failToGather: true}, errSadGather)
 
 	test.LogEntryContainsField(t, "error", errSadGather.Error(), hook.LastEntry())
 }
 
 func TestProcessFailToIssueKill(t *testing.T) {
+	processFailure(t, &mockProcessor{failToIssueKill: true}, errSadIssueKill)
+
+	test.LogEntryContainsField(t, "error", errSadIssueKill.Error(), hook.LastEntry())
+}
+
+func processFailure(t *testing.T, p Processor, expError error) {
 	c := &Config{
 		Applications:   applications,
 		GatherChanSize: gatherChanSize,
 		GatherTimeout:  gatherTimeout,
 	}
 
-	p := &mockProcessor{
-		failToIssueKill: true,
-	}
 	o, err := NewOrchestrator(c, p, logger)
 	test.ErrorNil(t, err)
 
 	o.Process(testApplication)
 
-	test.LogEntryContainsField(t, "error", errSadIssueKill.Error(), hook.LastEntry())
+	test.LogEntryContainsField(t, "error", expError.Error(), hook.LastEntry())
 }

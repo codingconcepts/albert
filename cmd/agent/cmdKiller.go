@@ -20,6 +20,8 @@ func (k *cmdKiller) Kill(instructions []string) (err error) {
 		args = instructions[1:]
 	}
 
+	// #nosec - the purpose of this killer is to execute
+	// subprocesses with variables...
 	cmd := exec.Command(name, args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stdin = os.Stdin

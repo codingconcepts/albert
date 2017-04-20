@@ -1,10 +1,10 @@
-package model_test
+package model
 
 import (
 	"fmt"
 	"testing"
 
-	"github.com/codingconcepts/albert/pkg/model"
+	"github.com/codingconcepts/albert/test"
 )
 
 func TestTakeRandom(t *testing.T) {
@@ -28,12 +28,9 @@ func TestTakeRandom(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(fmt.Sprintf("TestApplicationsTakeRandom_%.1f", testCase.perc), func(t *testing.T) {
-			sub := model.TakeRandom(applications, testCase.perc)
+			sub := TakeRandom(applications, testCase.perc)
 
-			// assert length
-			if len(sub) != testCase.expectedSubLength {
-				t.Fatalf("expected %d but got %d", testCase.expectedSubLength, len(sub))
-			}
+			test.Equals(t, testCase.expectedSubLength, len(sub))
 
 			// assert uniqueness
 			itemMap := make(map[string]int)
@@ -41,10 +38,8 @@ func TestTakeRandom(t *testing.T) {
 				itemMap[item]++
 			}
 
-			for key, value := range itemMap {
-				if value > 1 {
-					t.Fatalf("application %s found %d times", key, value)
-				}
+			for _, value := range itemMap {
+				test.Equals(t, 1, value)
 			}
 		})
 	}
@@ -57,30 +52,23 @@ func TestTakeRandomReturnOneWhenOnlyOneProvided(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(fmt.Sprintf("TestApplicationsTakeRandom_%.1f", testCase), func(t *testing.T) {
-			sub := model.TakeRandom(applications, testCase)
+			sub := TakeRandom(applications, testCase)
 
-			// assert length
-			if len(sub) != 1 {
-				t.Fatalf("expected 1 but got %d", len(sub))
-			}
+			test.Equals(t, 1, len(sub))
 		})
 	}
 }
 
 func TestTakeRandomTakesNoneWhenPercentageIsZero(t *testing.T) {
 	applications := []string{"a", "b", "c"}
-	sub := model.TakeRandom(applications, 0)
+	sub := TakeRandom(applications, 0)
 
-	if len(sub) != 0 {
-		t.Fatalf("expected 3 items but got %d", len(sub))
-	}
+	test.Equals(t, 0, len(sub))
 }
 
 func TestTakeRandomTakesNoneWhenPercentageIsTiny(t *testing.T) {
 	applications := []string{"a", "b", "c"}
-	sub := model.TakeRandom(applications, 0.01)
+	sub := TakeRandom(applications, 0.01)
 
-	if len(sub) != 0 {
-		t.Fatalf("expected 3 items but got %d", len(sub))
-	}
+	test.Equals(t, 0, len(sub))
 }

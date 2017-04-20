@@ -64,6 +64,12 @@ task :test do
     end
 end
 
+task :bench do
+    Dir.chdir('pkg') do
+        sh("go test ./... -bench=Benchmark* -v")
+    end
+end
+
 namespace :cover do
     task :agent do
         Dir.chdir('pkg\\agent') do

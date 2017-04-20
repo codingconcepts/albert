@@ -25,7 +25,9 @@ func main() {
 		return
 	}
 
-	a, err := agent.NewAgent(config, conn, logger)
+	processor := newNatsProcessor(conn)
+	killer := newCmdKiller()
+	a, err := agent.NewAgent(config, processor, killer, logger)
 	if err != nil {
 		log.Fatal(err)
 	}

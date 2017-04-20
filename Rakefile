@@ -83,6 +83,12 @@ namespace :cover do
         end
     end
 
+    task :all do
+        Rake::Task["cover:agent"].execute
+        Rake::Task["cover:model"].execute
+        Rake::Task["cover:orch"].execute
+    end
+
     task :cover do
         sh("go test --coverprofile=coverage.out")
         sh("go tool cover --html=coverage.out")

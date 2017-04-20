@@ -40,8 +40,9 @@ var (
 	// these are the same to make testing deterministic
 	exampleTopic     = "example_topic"
 	happyGatherResps = []string{exampleTopic, exampleTopic}
-	errSadGather     = errors.New("sadGatherError")
-	errSadIssueKill  = errors.New("sadIssueKill")
+
+	errSadGather    = errors.New("sadGatherError")
+	errSadIssueKill = errors.New("sadIssueKill")
 )
 
 type mockProcessor struct {

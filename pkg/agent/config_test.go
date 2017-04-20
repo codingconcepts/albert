@@ -17,6 +17,13 @@ func TestNewConfigFromReader(t *testing.T) {
 	test.Equals(t, instructions, c.Instructions)
 }
 
+func TestNewConfigFromReaderWithError(t *testing.T) {
+	reader := newErrorReader(errSadConfigReader)
+
+	_, err := NewConfigFromReader(reader)
+	test.ErrorNotNil(t, err)
+}
+
 func TestValidateWithValidConfig(t *testing.T) {
 	c := Config{
 		Application:  application,

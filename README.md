@@ -102,3 +102,4 @@ This contrived MarketDataAPI example might be running different agents on differ
 - [ ] Decentralised logging (existing hook for Logrus?)
 - [x] SDK to turn any application into an agent
 - [x] Agent overrides for kill procedure (in config)
+- [ ] Test that the channel pipe goroutines in the agent's natsProcessor end

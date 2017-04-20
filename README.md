@@ -2,8 +2,9 @@
 I'd be pretty pissed off too if you blasted me off into space and left me to suffocate.
 
 [![Build Status](https://travis-ci.org/codingconcepts/albert.svg?branch=master)](https://travis-ci.org/codingconcepts/albert)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c57760a288af415083e6c1331143d368)](https://www.codacy.com/app/codingconcepts/albert?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=codingconcepts/albert&amp;utm_campaign=Badge_Grade)
 [![Go Report Card](https://goreportcard.com/badge/github.com/codingconcepts/albert)](https://goreportcard.com/report/github.com/codingconcepts/albert)
+[![Exago](https://api.exago.io:443/badge/rank/github.com/codingconcepts/albert)](https://exago.io/project/github.com/codingconcepts/albert)
+[![Exago](https://api.exago.io:443/badge/cov/github.com/codingconcepts/albert)](https://exago.io/project/github.com/codingconcepts/albert)
 
 ## Disclaimer
 
@@ -92,7 +93,6 @@ This contrived MarketDataAPI example might be running different agents on differ
         <td>Docker image</td>
         <td colspan="2">$(docker stop $(docker ps -a -q --filter ancestor=IMAGENAME --format="{{.ID}}"))</td>
     </tr>
-
 </table>
 
 ### Todo

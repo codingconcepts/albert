@@ -62,30 +62,32 @@ func (a *Agent) Start() (err error) {
 		a.Logger.WithError(err).Error("failed to subscribe to scatter gather requests")
 		return
 	}
+	defer func() {
+		if err = gatherStop(); err != nil {
+			a.Logger.WithError(err).Error("failed to stop scatter gather subscriber")
+			return
+		}
+	}()
 
 	killChan, killStop, err := a.processor.KillSubscribe(a.KillInbox)
 	if err != nil {
 		a.Logger.WithError(err).Error("failed to subscribe to kill requests")
 		return
 	}
+	defer func() {
+		if err = killStop(); err != nil {
+			a.Logger.WithError(err).Error("failed to stop kill subscriber")
+			return
+		}
+	}()
 
 	// caller will block here
 	a.listenLoop(gatherChan, killChan)
-
-	// not deferring to make error-handling simpler for now.
-	if err = gatherStop(); err != nil {
-		a.Logger.WithError(err).Error("failed to stop scatter gather subscriber")
-		return
-	}
-
-	if err = killStop(); err != nil {
-		a.Logger.WithError(err).Error("failed to stop kill subscriber")
-		return
-	}
-
 	return
 }
 
+// listenLoop selects between the given channels and a.stopSig
+// and will block until a message is received on a.stopSig.
 func (a *Agent) listenLoop(gatherChan chan string, killChan chan struct{}) {
 	for {
 		select {
@@ -108,7 +110,7 @@ func (a *Agent) listenLoop(gatherChan chan string, killChan chan struct{}) {
 	}
 }
 
-// Stop tears down the Agent.
+// Stop tears down the Agent by sending a message to a.stopSig.
 func (a *Agent) Stop() {
 	a.stopSig <- struct{}{}
 }

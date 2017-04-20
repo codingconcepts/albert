@@ -34,11 +34,14 @@ func main() {
 	go a.Start()
 
 	a.Logger.Info("agent started successfully")
-	fmt.Scanln()
 
+	fmt.Scanln()
 	a.Stop()
 }
 
+// mustLoadConfig loads a configuration file from disk and
+// fails if it cannot be loaded (as the application won't be
+// able to continue without it).
 func mustLoadConfig(path string) (config *agent.Config) {
 	file, err := os.Open(path)
 	if err != nil {

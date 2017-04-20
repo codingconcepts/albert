@@ -6,12 +6,17 @@ type natsProcessor struct {
 	conn *nats.Conn
 }
 
+// newNatsProcessor returns a pointer to a new instance of
+// a natsProcessor, passing the connection it'll use.
 func newNatsProcessor(conn *nats.Conn) (p *natsProcessor) {
 	return &natsProcessor{
 		conn: conn,
 	}
 }
 
+// GatherSubscribe performs a scatter-gather request against
+// a NATS cluster and pipes the NATS messages received into a
+// simpler channel for later consumption.
 func (p *natsProcessor) GatherSubscribe(topic string) (c chan string, stop func() error, err error) {
 	c = make(chan string)
 
@@ -30,6 +35,9 @@ func (p *natsProcessor) GatherSubscribe(topic string) (c chan string, stop func(
 	return
 }
 
+// KillSubscribe subscribes for kill requests from the Orchestrator
+// and pipes the NATS messages received into a simpler channel for
+// later consumption.
 func (p *natsProcessor) KillSubscribe(topic string) (c chan struct{}, stop func() error, err error) {
 	c = make(chan struct{})
 
@@ -48,6 +56,8 @@ func (p *natsProcessor) KillSubscribe(topic string) (c chan struct{}, stop func(
 	return
 }
 
+// subscribe creates a NATS subscription and returns the channel created
+// and a function that can be used to tear everything down.
 func (p *natsProcessor) subscribe(topic string) (msgs chan *nats.Msg, stop func() error, err error) {
 	msgs = make(chan *nats.Msg)
 
@@ -56,6 +66,8 @@ func (p *natsProcessor) subscribe(topic string) (msgs chan *nats.Msg, stop func(
 		return
 	}
 
+	// close over the subscription and underlying receive channel, to
+	// allow us to tear everything down later on.
 	stop = func() (err error) {
 		if err = sub.Unsubscribe(); err != nil {
 			return
@@ -68,6 +80,9 @@ func (p *natsProcessor) subscribe(topic string) (msgs chan *nats.Msg, stop func(
 	return
 }
 
+// GatherResponse allows an Agent to respond to a scatter-gather
+// request from the Orchestrator, to allow it to decide which
+// Agents for any given application should perform a kill operation.
 func (p *natsProcessor) GatherResponse(orchInbox string, agentInbox string, application string) (err error) {
 	return p.conn.PublishRequest(orchInbox, agentInbox, []byte(application))
 }

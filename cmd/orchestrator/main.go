@@ -46,6 +46,9 @@ func main() {
 	fmt.Scanln()
 }
 
+// mustLoadConfig loads a configuration file from disk and
+// fails if it cannot be loaded (as the application won't be
+// able to continue without it).
 func mustLoadConfig(path string) (config *orchestrator.Config) {
 	file, err := os.Open(path)
 	if err != nil {

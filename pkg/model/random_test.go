@@ -2,7 +2,9 @@ package model
 
 import (
 	"fmt"
+	"math"
 	"testing"
+	"testing/quick"
 
 	"github.com/codingconcepts/albert/test"
 )
@@ -71,6 +73,42 @@ func TestTakeRandomTakesNoneWhenPercentageIsTiny(t *testing.T) {
 	sub := TakeRandom(applications, 0.01)
 
 	test.Equals(t, 0, len(sub))
+}
+
+func TestBlackBoxCheckBetween(t *testing.T) {
+	f := func(min int, max int) bool {
+		result := Between(min, max)
+
+		// Between ensures min is less than or equal to max,
+		// so perform the same switch here
+		if min > max {
+			min, max = max, min
+		}
+		return result >= min && result <= max
+	}
+	if err := quick.Check(f, nil); err != nil {
+		t.Error(err)
+	}
+}
+
+func TestBlackBoxTakeRandom(t *testing.T) {
+	f := func(input []string, perc float64) bool {
+		// TakeRandom ensures perc is between 0 and 1,
+		// so perform the same check here
+		if perc < 0 || perc > 1 {
+			return true
+		}
+
+		result := TakeRandom(input, perc)
+
+		actPerc := math.Trunc(float64((100 * len(result)) / len(input)))
+		expPerc := math.Trunc(perc)
+
+		return actPerc == expPerc
+	}
+	if err := quick.Check(f, nil); err != nil {
+		t.Error(err)
+	}
 }
 
 func BenchmarkBetween(b *testing.B) {

@@ -13,8 +13,9 @@ func init() {
 // TakeRandom takes a random percentage of strings from a slice
 // of strings, guaranteeing that each item will appear only once.
 func TakeRandom(input []string, perc float64) (output []string) {
-	// if no percentage has been specified, don't kill anything
-	if perc == 0 {
+	// if no percentage has been specified or percentage is invalid,
+	// don't kill anything
+	if perc == 0 || perc < 0 || perc > 1 {
 		return
 	}
 
@@ -42,5 +43,10 @@ func TakeRandom(input []string, perc float64) (output []string) {
 
 // Between returns a number between min and max inclusively.
 func Between(min int, max int) int {
+	// swap min and max if max is less than min
+	if max < min {
+		min, max = max, min
+	}
+
 	return rand.Int()%(max-min) + min
 }

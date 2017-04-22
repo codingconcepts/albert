@@ -18,7 +18,7 @@ func TestNewOrchestratorConfigPropertiesAssigned(t *testing.T) {
 	o, err := NewOrchestrator(c, p, logrus.New())
 	test.ErrorNil(t, err)
 
-	test.Equals(t, c.Applications, o.Applications)
+	test.Equals(t, c.Applications, o.applications)
 }
 
 func TestNewOrchestratorWithInvalidConfig(t *testing.T) {

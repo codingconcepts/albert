@@ -9,17 +9,17 @@ import (
 // Agent holds the necessary information to process listen
 // for and respond to, instructions from the Orchestrator.
 type Agent struct {
-	// Application is the name of the name of the application
+	// application is the name of the name of the application
 	// group that this agent serves.  This must match with the
 	// name of the application group expected by the orchestrator.
-	Application string
+	application string
 
-	// Instructions is a slice of strings used to execute commands.
+	// instructions is a slice of strings used to execute commands.
 	// If for example the cmdKiller is used to carry out kills,
 	// Instructions[0] will be the name of the command line
 	// application, while Instructions [1:] represent the optional
 	// arguments to pass to it.
-	Instructions []string
+	instructions []string
 
 	logger *logrus.Logger
 
@@ -56,8 +56,8 @@ func NewAgent(config *Config, processor Processor, killer Killer, logger *logrus
 	}
 
 	a = &Agent{
-		Application:  config.Application,
-		Instructions: config.Instructions,
+		application:  config.Application,
+		instructions: config.Instructions,
 		logger:       logger,
 		inbox:        inbox,
 		processor:    processor,
@@ -72,7 +72,7 @@ func NewAgent(config *Config, processor Processor, killer Killer, logger *logrus
 // the Orcestrator.
 // NOTE:  this function blocks, launch in a goroutine
 func (a *Agent) Start() (err error) {
-	gatherChan, gatherStop, err := a.processor.GatherSubscribe(a.Application)
+	gatherChan, gatherStop, err := a.processor.GatherSubscribe(a.application)
 	if err != nil {
 		a.logger.WithError(err).Error("failed to subscribe to scatter gather requests")
 		return
@@ -107,13 +107,13 @@ func (a *Agent) listenLoop(gatherChan chan string, killChan chan struct{}) {
 	for {
 		select {
 		case reply := <-gatherChan:
-			if err := a.processor.GatherResponse(reply, a.inbox, a.Application); err != nil {
+			if err := a.processor.GatherResponse(reply, a.inbox, a.application); err != nil {
 				a.logger.WithField("reply", reply).WithError(err).Error("error occurred gathering")
 			} else {
 				a.logger.WithField("reply", reply).Debug("responded to scatter gather request")
 			}
 		case <-killChan:
-			if err := a.killer.Kill(a.Instructions); err != nil {
+			if err := a.killer.Kill(a.instructions); err != nil {
 				a.logger.WithError(err).Error("error occurred killing")
 			} else {
 				a.logger.Debug("performed kill")

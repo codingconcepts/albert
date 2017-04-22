@@ -34,7 +34,7 @@ func main() {
 	go o.Start()
 	defer o.Stop()
 
-	for _, a := range o.Applications {
+	for _, a := range config.Applications {
 		logger.WithFields(logrus.Fields{
 			"name":       a.Name,
 			"schedule":   a.Schedule,

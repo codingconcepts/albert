@@ -9,8 +9,15 @@ import (
 // Orchestrator holds the necessary information to process
 // Application instances.
 type Orchestrator struct {
-	Processor    Processor
-	Applications Applications
+	// processor provides a basic contract by with the
+	// orchestrator is able to request agents for application
+	// groups and issue kill orders to selected agents.
+	processor Processor
+
+	// applications is a collection of application groups
+	// this orchestrator is allowed to control.  For each
+	// application group, there will be zero or more agents.
+	applications Applications
 
 	logger *logrus.Logger
 
@@ -32,8 +39,8 @@ func NewOrchestrator(c *Config, processor Processor, logger *logrus.Logger) (o *
 	}
 
 	o = &Orchestrator{
-		Processor:    processor,
-		Applications: c.Applications,
+		processor:    processor,
+		applications: c.Applications,
 		logger:       logger,
 	}
 
@@ -45,7 +52,7 @@ func NewOrchestrator(c *Config, processor Processor, logger *logrus.Logger) (o *
 // NOTE:  Needs to be run in a goroutine
 func (o *Orchestrator) Start() {
 	o.cronRunner = cron.New()
-	for _, c := range o.Applications {
+	for _, c := range o.applications {
 		if err := o.cronRunner.AddFunc(c.Schedule, func() { o.Process(c) }); err != nil {
 			o.logger.Fatal(err)
 		}
@@ -62,7 +69,7 @@ func (o *Orchestrator) Stop() {
 // Process makes a request for Applications and the performs a
 // set of kill operations on them.
 func (o *Orchestrator) Process(a Application) {
-	agents, err := o.Processor.Gather(a.Name)
+	agents, err := o.processor.Gather(a.Name)
 	if err != nil {
 		o.logger.WithFields(logrus.Fields{
 			"name": a.Name,
@@ -84,7 +91,7 @@ func (o *Orchestrator) Process(a Application) {
 			"topic": topic,
 		}).Info("published kill")
 
-		if err := o.Processor.IssueKill(topic); err != nil {
+		if err := o.processor.IssueKill(topic); err != nil {
 			o.logger.WithFields(logrus.Fields{
 				"name": a.Name,
 			}).WithError(err).Error("error occurred issuing kill command")

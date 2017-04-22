@@ -1,9 +1,19 @@
 package model
 
 import (
+	prng "crypto/rand"
+	"encoding/hex"
 	"math"
 	"math/rand"
 	"time"
+)
+
+const (
+	// InboxMinLength is the minimum size (in bytes) of an inbox
+	InboxMinLength = 10
+
+	// InboxMaxLength is the maximum size (in bytes) of an inbox
+	InboxMaxLength = 20
 )
 
 func init() {
@@ -49,4 +59,22 @@ func Between(min int, max int) int {
 	}
 
 	return rand.Int()%(max-min) + min
+}
+
+// InboxName generates a cryptographically-secure random string
+// which can be used as an inbox for orchestrators and agents
+// during communication.
+func InboxName(length int) (name string, err error) {
+	// if for any reason a ridiculous length has been provided,
+	// swap it out for a sensible default.
+	if length < InboxMinLength || length > InboxMaxLength {
+		length = InboxMaxLength
+	}
+
+	data := make([]byte, length)
+	if _, err = prng.Read(data); err != nil {
+		return
+	}
+
+	return hex.EncodeToString(data), nil
 }

@@ -75,6 +75,34 @@ func TestTakeRandomTakesNoneWhenPercentageIsTiny(t *testing.T) {
 	test.Equals(t, 0, len(sub))
 }
 
+func TestInboxName(t *testing.T) {
+	testCases := []struct {
+		length         int
+		expectedLength int
+	}{
+		{length: 10, expectedLength: InboxMaxLength},
+		{length: 11, expectedLength: 11 * 2},
+		{length: 19, expectedLength: 19 * 2},
+		{length: -1, expectedLength: InboxMaxLength * 2},
+		{length: 0, expectedLength: InboxMaxLength * 2},
+		{length: 1, expectedLength: InboxMaxLength * 2},
+		{length: 9, expectedLength: InboxMaxLength * 2},
+		{length: InboxMaxLength, expectedLength: InboxMaxLength * 2},
+		{length: 21, expectedLength: InboxMaxLength * 2},
+		{length: 101, expectedLength: InboxMaxLength * 2},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(fmt.Sprintf("TestInboxName_%d", testCase.length), func(t *testing.T) {
+			inboxName, err := InboxName(testCase.length)
+			t.Log(inboxName)
+
+			test.ErrorNil(t, err)
+			test.Equals(t, testCase.expectedLength, len(inboxName))
+		})
+	}
+}
+
 func TestBlackBoxCheckBetween(t *testing.T) {
 	f := func(min int, max int) bool {
 		result := Between(min, max)
@@ -105,6 +133,16 @@ func TestBlackBoxTakeRandom(t *testing.T) {
 		expPerc := math.Trunc(perc)
 
 		return actPerc == expPerc
+	}
+	if err := quick.Check(f, nil); err != nil {
+		t.Error(err)
+	}
+}
+
+func TestBlackBoxInboxName(t *testing.T) {
+	f := func(length int) bool {
+		result, err := InboxName(length)
+		return err == nil && len(result) >= InboxMinLength && len(result) <= InboxMaxLength*2
 	}
 	if err := quick.Check(f, nil); err != nil {
 		t.Error(err)

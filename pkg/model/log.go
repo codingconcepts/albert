@@ -13,7 +13,13 @@ func NewLogger(out io.Writer, level log.Level) (logger *log.Logger) {
 	logger.Level = level
 	logger.Out = out
 	logger.Formatter = UTCFormatter{&log.TextFormatter{
+		// always using the full timestamp formatter because the default
+		// number-based timestamp formatter makes distributed logging
+		// impossible.
 		FullTimestamp: true,
+
+		// always disabling console colours because they don't make for
+		// easy reading in terminals that don't support it.
 		DisableColors: true,
 	}}
 

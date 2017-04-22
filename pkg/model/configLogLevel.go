@@ -15,6 +15,8 @@ type ConfigLogLevel struct {
 
 // UnmarshalJSON unmarshals a ConfigLogLevel from JSON.
 func (d *ConfigLogLevel) UnmarshalJSON(b []byte) (err error) {
+	// trim off the quotes to get at the log level (the
+	// JSON object will appear as "debug")
 	raw := strings.Trim(string(b), `"`)
 	d.Level, err = logrus.ParseLevel(raw)
 

@@ -2,20 +2,21 @@ package agent
 
 import (
 	"github.com/Sirupsen/logrus"
+	"github.com/codingconcepts/albert/pkg/model"
 	nats "github.com/nats-io/go-nats"
 )
 
 // Agent holds the necessary information to process listen
 // for and respond to, instructions from the Orchestrator.
 type Agent struct {
-	KillInbox string
-	Logger    *logrus.Logger
+	Logger *logrus.Logger
 
 	Application  string
 	Instructions []string
 
 	processor  Processor
 	killer     Killer
+	inbox      string
 	gatherChan chan *nats.Msg
 	killChan   chan *nats.Msg
 	stopSig    chan struct{}
@@ -40,11 +41,16 @@ func NewAgent(config *Config, processor Processor, killer Killer, logger *logrus
 		return
 	}
 
+	inbox, err := model.InboxName(model.InboxMaxLength)
+	if err != nil {
+		return
+	}
+
 	a = &Agent{
 		Application:  config.Application,
 		Instructions: config.Instructions,
-		KillInbox:    nats.NewInbox(),
 		Logger:       logger,
+		inbox:        inbox,
 		processor:    processor,
 		killer:       killer,
 		stopSig:      make(chan struct{}),
@@ -69,7 +75,7 @@ func (a *Agent) Start() (err error) {
 		}
 	}()
 
-	killChan, killStop, err := a.processor.KillSubscribe(a.KillInbox)
+	killChan, killStop, err := a.processor.KillSubscribe(a.inbox)
 	if err != nil {
 		a.Logger.WithError(err).Error("failed to subscribe to kill requests")
 		return
@@ -92,7 +98,7 @@ func (a *Agent) listenLoop(gatherChan chan string, killChan chan struct{}) {
 	for {
 		select {
 		case reply := <-gatherChan:
-			if err := a.processor.GatherResponse(reply, a.KillInbox, a.Application); err != nil {
+			if err := a.processor.GatherResponse(reply, a.inbox, a.Application); err != nil {
 				a.Logger.WithField("reply", reply).WithError(err).Error("error occurred gathering")
 			} else {
 				a.Logger.WithField("reply", reply).Debug("responded to scatter gather request")

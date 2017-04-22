@@ -9,10 +9,19 @@ import (
 // Agent holds the necessary information to process listen
 // for and respond to, instructions from the Orchestrator.
 type Agent struct {
-	Logger *logrus.Logger
+	// Application is the name of the name of the application
+	// group that this agent serves.  This must match with the
+	// name of the application group expected by the orchestrator.
+	Application string
 
-	Application  string
+	// Instructions is a slice of strings used to execute commands.
+	// If for example the cmdKiller is used to carry out kills,
+	// Instructions[0] will be the name of the command line
+	// application, while Instructions [1:] represent the optional
+	// arguments to pass to it.
 	Instructions []string
+
+	logger *logrus.Logger
 
 	processor  Processor
 	killer     Killer
@@ -49,7 +58,7 @@ func NewAgent(config *Config, processor Processor, killer Killer, logger *logrus
 	a = &Agent{
 		Application:  config.Application,
 		Instructions: config.Instructions,
-		Logger:       logger,
+		logger:       logger,
 		inbox:        inbox,
 		processor:    processor,
 		killer:       killer,
@@ -65,24 +74,24 @@ func NewAgent(config *Config, processor Processor, killer Killer, logger *logrus
 func (a *Agent) Start() (err error) {
 	gatherChan, gatherStop, err := a.processor.GatherSubscribe(a.Application)
 	if err != nil {
-		a.Logger.WithError(err).Error("failed to subscribe to scatter gather requests")
+		a.logger.WithError(err).Error("failed to subscribe to scatter gather requests")
 		return
 	}
 	defer func() {
 		if err = gatherStop(); err != nil {
-			a.Logger.WithError(err).Error("failed to stop scatter gather subscriber")
+			a.logger.WithError(err).Error("failed to stop scatter gather subscriber")
 			return
 		}
 	}()
 
 	killChan, killStop, err := a.processor.KillSubscribe(a.inbox)
 	if err != nil {
-		a.Logger.WithError(err).Error("failed to subscribe to kill requests")
+		a.logger.WithError(err).Error("failed to subscribe to kill requests")
 		return
 	}
 	defer func() {
 		if err = killStop(); err != nil {
-			a.Logger.WithError(err).Error("failed to stop kill subscriber")
+			a.logger.WithError(err).Error("failed to stop kill subscriber")
 			return
 		}
 	}()
@@ -99,18 +108,18 @@ func (a *Agent) listenLoop(gatherChan chan string, killChan chan struct{}) {
 		select {
 		case reply := <-gatherChan:
 			if err := a.processor.GatherResponse(reply, a.inbox, a.Application); err != nil {
-				a.Logger.WithField("reply", reply).WithError(err).Error("error occurred gathering")
+				a.logger.WithField("reply", reply).WithError(err).Error("error occurred gathering")
 			} else {
-				a.Logger.WithField("reply", reply).Debug("responded to scatter gather request")
+				a.logger.WithField("reply", reply).Debug("responded to scatter gather request")
 			}
 		case <-killChan:
 			if err := a.killer.Kill(a.Instructions); err != nil {
-				a.Logger.WithError(err).Error("error occurred killing")
+				a.logger.WithError(err).Error("error occurred killing")
 			} else {
-				a.Logger.Debug("performed kill")
+				a.logger.Debug("performed kill")
 			}
 		case <-a.stopSig:
-			a.Logger.Info("received stop signal")
+			a.logger.Info("received stop signal")
 			return
 		}
 	}

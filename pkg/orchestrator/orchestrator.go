@@ -11,7 +11,8 @@ import (
 type Orchestrator struct {
 	Processor    Processor
 	Applications Applications
-	Logger       *logrus.Logger
+
+	logger *logrus.Logger
 
 	cronRunner *cron.Cron
 }
@@ -33,7 +34,7 @@ func NewOrchestrator(c *Config, processor Processor, logger *logrus.Logger) (o *
 	o = &Orchestrator{
 		Processor:    processor,
 		Applications: c.Applications,
-		Logger:       logger,
+		logger:       logger,
 	}
 
 	return
@@ -46,7 +47,7 @@ func (o *Orchestrator) Start() {
 	o.cronRunner = cron.New()
 	for _, c := range o.Applications {
 		if err := o.cronRunner.AddFunc(c.Schedule, func() { o.Process(c) }); err != nil {
-			o.Logger.Fatal(err)
+			o.logger.Fatal(err)
 		}
 	}
 
@@ -63,7 +64,7 @@ func (o *Orchestrator) Stop() {
 func (o *Orchestrator) Process(a Application) {
 	agents, err := o.Processor.Gather(a.Name)
 	if err != nil {
-		o.Logger.WithFields(logrus.Fields{
+		o.logger.WithFields(logrus.Fields{
 			"name": a.Name,
 		}).WithError(err).Error("error occurred gathering applications")
 		return
@@ -72,19 +73,19 @@ func (o *Orchestrator) Process(a Application) {
 	// select a number of applications at random to kill
 	randomAgents := model.TakeRandom(agents, a.Percentage)
 
-	o.Logger.WithFields(logrus.Fields{
+	o.logger.WithFields(logrus.Fields{
 		"totalCount": len(agents),
 		"killCount":  len(randomAgents),
 		"name":       a.Name,
 	}).Info("scatter gather responses received")
 
 	for _, topic := range randomAgents {
-		o.Logger.WithFields(logrus.Fields{
+		o.logger.WithFields(logrus.Fields{
 			"topic": topic,
 		}).Info("published kill")
 
 		if err := o.Processor.IssueKill(topic); err != nil {
-			o.Logger.WithFields(logrus.Fields{
+			o.logger.WithFields(logrus.Fields{
 				"name": a.Name,
 			}).WithError(err).Error("error occurred issuing kill command")
 		}

@@ -33,7 +33,7 @@ func main() {
 	}
 	go a.Start()
 
-	a.Logger.Info("agent started successfully")
+	logger.Info("agent started successfully")
 
 	fmt.Scanln()
 	a.Stop()

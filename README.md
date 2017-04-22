@@ -10,6 +10,10 @@ I'd be pretty pissed off too if you blasted me off into space and left me to suf
 
 Albert is the result of a 2-day project I undertook for my company's last hackathon.  As such, it shouldn't be considered reliable, finished or well-tested.  I'd love this to receive some input from the open source community, so if you're in need of a chaos monkey, or just want to make an existing one more chaotic, I'd love to hear from you!
 
+## Contributing
+
+At this early stage, albert is basically a free-for-all, so please do get involved.  So that we all maintain an air of professionalism however, please refer to the [contributing guidelines](https://github.com/codingconcepts/albert/blob/master/CONTRIBUTING.md) before making pull requests.
+
 ## Overview
 
 Albert is a simple, scalable and platform agnostic chaos monkey.

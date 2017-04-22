@@ -72,3 +72,43 @@ func TestTakeRandomTakesNoneWhenPercentageIsTiny(t *testing.T) {
 
 	test.Equals(t, 0, len(sub))
 }
+
+func BenchmarkBetween(b *testing.B) {
+	testCases := []struct {
+		min int
+		max int
+	}{
+		{min: 1, max: 10},
+		{min: 1, max: 100},
+		{min: 1, max: 10000},
+		{min: 1, max: 1000000},
+	}
+
+	for _, testCase := range testCases {
+		b.Run(fmt.Sprintf("BenchmarkBetween_%d_%d", testCase.min, testCase.max), func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				Between(testCase.min, testCase.max)
+			}
+		})
+	}
+}
+
+func BenchmarkTakeRandom(b *testing.B) {
+	testCases := []struct {
+		input []string
+		perc  float64
+	}{
+		{input: []string{"a", "b", "c", "d"}, perc: 0.25},
+		{input: []string{"a", "b", "c", "d"}, perc: 0.50},
+		{input: []string{"a", "b", "c", "d"}, perc: 0.75},
+		{input: []string{"a", "b", "c", "d"}, perc: 1},
+	}
+
+	for _, testCase := range testCases {
+		b.Run(fmt.Sprintf("BenchmarkTakeRandom_%s_%.2f", testCase.input, testCase.perc), func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				TakeRandom(testCase.input, testCase.perc)
+			}
+		})
+	}
+}

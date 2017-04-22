@@ -17,8 +17,8 @@ func TestNewAgentConfigPropertiesAssigned(t *testing.T) {
 	a, err := NewAgent(c, p, k, logger)
 	test.ErrorNil(t, err)
 
-	test.Equals(t, c.Application, a.Application)
-	test.Equals(t, c.Instructions, a.Instructions)
+	test.Equals(t, c.Application, a.application)
+	test.Equals(t, c.Instructions, a.instructions)
 }
 
 func TestNewAgentWithInvalidConfig(t *testing.T) {

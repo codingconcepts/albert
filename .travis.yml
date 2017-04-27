@@ -3,19 +3,19 @@ language: go
 go:
 - 1.8
 
-install:
-  - export GOPATH="${TRAVIS_BUILD_DIR}/vendor/_workspace:$GOPATH"
-  - export PATH="${TRAVIS_BUILD_DIR}/vendor/_workspace/bin:$PATH"
-  - go get golang.org/x/tools/cmd/cover
-  - go get github.com/mattn/goveralls
-  - go test -v -covermode=count -coverprofile=coverage.out $GOPATH/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
-
-script:
-- cd pkg
-- go test ./... -v
-
 secure: "sS0wAyHPAlvWbgs6NtJyIzo8goYkfPlXDFBs/77duT6DQRmoYXNrGqorFwpIKFsRGop8Er77bzesIyb1FewxzInopWoUTijr7vASWSIvXYranuJWkSftCMBYqX8tr2MP2QFhrmweXMtOODWZDZKI
 7L1ZVmwwx34NSUjhcwgEMhac5NYXXPdyNNhVWLlLf/NZxwH8d+GNUAOhU2tgK4M7DTuXWg6ZMh9JX/EMhmnfg1iCflDM1ZX5p/ImP2f+dphsC5K5e08DQZAHwZZSKCM9kiPj2deJu+bf+6vB+whS90EvA4vOE7p
 fvjcZQ4+/JPyLZmjnjj0Vi3wiyRbKRdv4vHpCRhN2T0kIx7BNCw7xIO0PDpvGeZvf3EXVeixH1F6HZrPl7JDwIlhxxMerMcxxkzvGnAThckdrr/Z+K3X8n6Ou+pyrlwNz+jNxF/UPkg6qlUW9FDNHE+G1gjZWWu
 vLGWU0L+3UBD79d7C/VWOvRuhSSc+4rblzLrctBYhz/wIO9iJ9Zt/GvWlAQZZeFRNRlBZGy+0vgkj7prLp8j7uzHmc7N0FG2jFnmLVlFvRhFiKzXmIoewkE+NbgHXGZEO14aCD6CHbD237rNwS1Qi7W+tQLWm15
 5x3eEYicLeftba8e3kWqPDFOTKXj4eNUx1mEii0Z7idM6OU5wn3qXHCiig="
+
+install:
+  - export GOPATH="${TRAVIS_BUILD_DIR}/vendor/_workspace:$GOPATH"
+  - export PATH="${TRAVIS_BUILD_DIR}/vendor/_workspace/bin:$PATH"
+  - go get golang.org/x/tools/cmd/cover
+  - go get github.com/mattn/goveralls
+
+script:
+  - cd pkg
+  - go test ./... -v
+  - go test -v -covermode=count -coverprofile=coverage.out $GOPATH/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN

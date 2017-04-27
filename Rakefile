@@ -1,6 +1,10 @@
 require 'rake'
 require 'semver'
 
+# required for coveralls.io
+require 'coveralls'
+Coveralls.wear!
+
 orchOutput = 'albert-orchestrator.exe'
 agentOutput = 'albert-agent.exe'
 embeddedExampleOutput = 'albert-embedded-example.exe'

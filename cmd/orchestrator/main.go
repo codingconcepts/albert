@@ -10,6 +10,11 @@ import (
 	nats "github.com/nats-io/go-nats"
 )
 
+var (
+	buildVersion   string
+	buildTimestamp string
+)
+
 func main() {
 	config := mustLoadConfig("config.json")
 	logger := model.NewLogger(os.Stdout, config.LogLevel.Level)
@@ -42,7 +47,10 @@ func main() {
 		}).Info("application schedule")
 	}
 
-	logger.Info("orchestrator started successfully")
+	logger.WithFields(logrus.Fields{
+		"buildVersion":   buildVersion,
+		"buildTimestamp": buildTimestamp,
+	}).Info("orchestrator started successfully")
 	fmt.Scanln()
 }
 

@@ -1,4 +1,5 @@
 require 'rake'
+require 'semver'
 
 orchOutput = 'albert-orchestrator.exe'
 agentOutput = 'albert-agent.exe'
@@ -10,32 +11,45 @@ task :nats do
     end
 end
 
-task :orch do
-    Dir.chdir('cmd\\orchestrator') do
-        sh('go', 'build', '-o', orchOutput)
-        sh("start #{orchOutput}")
+namespace :build do
+    task :all do
+        buildVersion = SemVer.find.to_s
+        buildTimestamp = DateTime.now().strftime("%F %T")
+
+        ldBuildVersion = "-X \"main.buildVersion=#{buildVersion}\""
+        ldBuildTimestamp = "-X \"main.buildTimestamp=#{buildTimestamp}\""
+
+        Dir.chdir('cmd\\orchestrator') do
+            sh('go', 'build', '-ldflags', "#{ldBuildVersion} #{ldBuildTimestamp}", '-o', orchOutput)
+        end
+
+        Dir.chdir('cmd\\agent') do
+            sh('go', 'build', '-ldflags', "#{ldBuildVersion} #{ldBuildTimestamp}", '-o', agentOutput)
+        end
     end
 end
 
-task :agent do
-    Dir.chdir('cmd\\agent') do
-        sh('go', 'build', '-o', agentOutput)
-        sh("start #{agentOutput}")
-        sh("start #{agentOutput}")
+namespace :run do
+    task :orch do
+        Dir.chdir('cmd\\orchestrator') do
+            sh('go', 'build', '-o', orchOutput)
+            sh("start #{orchOutput}")
+        end
     end
-end
 
-task :example do
-    Dir.chdir('cmd\\example') do
-        sh('go', 'build', '-o', embeddedExampleOutput)
-        sh("start #{embeddedExampleOutput}")
+    task :agent do
+        Dir.chdir('cmd\\agent') do
+            sh('go', 'build', '-o', agentOutput)
+            sh("start #{agentOutput}")
+            sh("start #{agentOutput}")
+        end
     end
-end
 
-task :run do
-    Rake::Task["nats"].execute
-    Rake::Task["agent"].execute
-    Rake::Task["orch"].execute
+    task :all do
+        Rake::Task["nats"].execute
+        Rake::Task["agent"].execute
+        Rake::Task["orch"].execute
+    end
 end
 
 task :stop do

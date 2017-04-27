@@ -5,9 +5,15 @@ import (
 	"log"
 	"os"
 
+	"github.com/Sirupsen/logrus"
 	"github.com/codingconcepts/albert/pkg/agent"
 	"github.com/codingconcepts/albert/pkg/model"
 	nats "github.com/nats-io/go-nats"
+)
+
+var (
+	buildVersion   string
+	buildTimestamp string
 )
 
 func main() {
@@ -33,7 +39,10 @@ func main() {
 	}
 	go a.Start()
 
-	logger.Info("agent started successfully")
+	logger.WithFields(logrus.Fields{
+		"buildVersion":   buildVersion,
+		"buildTimestamp": buildTimestamp,
+	}).Info("agent started successfully")
 
 	fmt.Scanln()
 	a.Stop()

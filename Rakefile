@@ -5,12 +5,6 @@ orchOutput = 'albert-orchestrator.exe'
 agentOutput = 'albert-agent.exe'
 embeddedExampleOutput = 'albert-embedded-example.exe'
 
-task :nats do
-    Dir.chdir('cmd\\nats') do
-        sh("start gnatsd --config nats.conf")
-    end
-end
-
 namespace :build do
     task :all do
         buildVersion = SemVer.find.to_s
@@ -30,6 +24,12 @@ namespace :build do
 end
 
 namespace :run do
+    task :nats do
+        Dir.chdir('cmd\\nats') do
+            sh("start gnatsd --config nats.conf")
+        end
+    end
+
     task :orch do
         Dir.chdir('cmd\\orchestrator') do
             sh('go', 'build', '-o', orchOutput)
@@ -46,9 +46,9 @@ namespace :run do
     end
 
     task :all do
-        Rake::Task["nats"].execute
-        Rake::Task["agent"].execute
-        Rake::Task["orch"].execute
+        Rake::Task["run:nats"].execute
+        Rake::Task["run:agent"].execute
+        Rake::Task["run:orch"].execute
     end
 end
 

@@ -33,7 +33,7 @@ $ go get -u github.com/codingconcepts/albert
 Out of habit, I'm using Rake, so if you've got it available (it's really easy to install), just run the following at the project root directory:
 
 ``` bash
-$ rake run
+$ rake run:all
 ```
 
 This will start the gnatsd node, 2 agents and 1 orchestrator.  The agents are configured to run in `dummy` mode, just in case you're on a Windows machine and happen to have Notepad running :)

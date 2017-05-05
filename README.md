@@ -1,6 +1,7 @@
 # Albert
 I'd be pretty pissed off too if you blasted me off into space and left me to suffocate.
 
+[![Godoc](https://godoc.org/github.com/codingconcepts/albert?status.svg)](https://godoc.org/github.com/codingconcepts/albert)
 [![Build Status](https://travis-ci.org/codingconcepts/albert.svg?branch=master)](https://travis-ci.org/codingconcepts/albert)
 [![Exago](https://api.exago.io:443/badge/cov/github.com/codingconcepts/albert)](https://exago.io/project/github.com/codingconcepts/albert)
 

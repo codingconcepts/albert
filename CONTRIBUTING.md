@@ -1,6 +1,6 @@
 # Contributing to albert
 
-Albert is in a very early stage of development, so I've come at a good time!  It's *basically* a free-for-all at this stage but to prevent things spiralling out-of-control, here are a few wooly guidelines:
+Albert is in a very early stage of development, so you've come at a good time!  It's *basically* a free-for-all at this stage but to prevent things spiralling out-of-control, here are a few wooly guidelines:
 
 ## Reporting issues
 
